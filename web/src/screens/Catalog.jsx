@@ -22,9 +22,7 @@ export default function Catalog({ selected, onPick, onEditMeasure, benchmark }) 
         A curated demo rack — every length below is the published outseam for
         that size. Your saved length:{' '}
         <strong>{benchmark.cm} cm</strong>{' '}
-        <button className="linklike" onClick={onEditMeasure} style={{ border: 0, background: 'none', color: 'var(--primary)', font: 'inherit', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
-          edit
-        </button>
+        <button className="linklike" onClick={onEditMeasure}>edit</button>
       </p>
 
       {error && <p className="error-note">Couldn't load the catalog ({error}). Is the server running?</p>}
@@ -46,14 +44,24 @@ export default function Catalog({ selected, onPick, onEditMeasure, benchmark }) 
               <span className="meta">
                 <span className="name">{g.name}</span>
                 <span className="sub">{g.label} · lengths {g.sizes[0].outseamCm}–{g.sizes.at(-1).outseamCm} cm</span>
-                <span className="price">${g.priceUsd}</span>
+                <span className="price">
+                  ${g.priceUsd}
+                  {g.sizes.some(s => Math.abs(s.outseamCm - benchmark.cm) <= 1.5) && (
+                    <span className="fit-badge">has your length</span>
+                  )}
+                </span>
               </span>
             </button>
             {openId === g.id && (
               <div>
                 <div className="chips" role="group" aria-label={`Sizes for ${g.name}`}>
                   {g.sizes.map(s => (
-                    <button key={s.label} aria-pressed={size?.label === s.label} onClick={() => setSize(s)}>
+                    <button
+                      key={s.label}
+                      aria-pressed={size?.label === s.label}
+                      aria-label={`Size ${s.label}, ${s.outseamCm} centimeters`}
+                      onClick={() => setSize(s)}
+                    >
                       {s.label}<span className="len">{s.outseamCm} cm</span>
                     </button>
                   ))}

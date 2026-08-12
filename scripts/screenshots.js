@@ -17,7 +17,10 @@ await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
 page.on('pageerror', e => console.error('PAGE ERROR:', e.message));
 page.on('console', m => m.type() === 'error' && console.error('CONSOLE:', m.text()));
 
-const shot = name => page.screenshot({ path: `${OUT}/${name}.png` });
+const shot = async name => {
+  await new Promise(r => setTimeout(r, 450)); // let screen transitions settle
+  await page.screenshot({ path: `${OUT}/${name}.png` });
+};
 const tapByText = async (sel, text) => {
   await page.evaluate((sel, text) => {
     const el = [...document.querySelectorAll(sel)].find(e => e.textContent.includes(text));
@@ -55,7 +58,7 @@ await tapByText('.btn', 'Check the length');
 // 4 loading then verdict
 await page.waitForSelector('.tasklist');
 await shot('4-loading');
-await page.waitForSelector('.verdict', { timeout: 30000 });
+await page.waitForSelector('.verdict-hero', { timeout: 30000 });
 await new Promise(r => setTimeout(r, 700));
 await shot('4-verdict');
 

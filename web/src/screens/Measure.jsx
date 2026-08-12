@@ -38,7 +38,11 @@ export default function Measure({ initial, onDone }) {
         />
         <span className="unit">cm</span>
       </label>
-      <p className="hint">Most adult outseams land between 95 and 115 cm.</p>
+      <p className="hint">
+        {cm !== '' && !valid
+          ? 'That doesn’t look like a flat-measured outseam — most land between 95 and 115 cm.'
+          : 'Most adult outseams land between 95 and 115 cm.'}
+      </p>
 
       <h2>How do you like your hem to sit?</h2>
       <div className="seg" role="group" aria-label="Break preference">

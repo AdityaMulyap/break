@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 const HEM_PRICE = 12;
 
 export default function Checkout({ garment, size, shoe, render, onBack, onRestart }) {
-  const needsHem = render?.verdict?.verdict === 'too_long';
+  const verdictKind = render?.verdict?.verdict;
+  const needsHem = verdictKind === 'too_long';
+  const tooShort = verdictKind === 'too_short';
   const [hemOn, setHemOn] = useState(needsHem);
   const [placed, setPlaced] = useState(false);
 
@@ -16,8 +18,9 @@ export default function Checkout({ garment, size, shoe, render, onBack, onRestar
           <div className="check" aria-hidden="true">✓</div>
           <h1>Order placed — in the demo sense</h1>
           <p className="lede" style={{ margin: '10px auto 26px' }}>
-            Nothing was charged and nothing ships. What you just saw is the point:
-            the try-on told you how it looks, Hemline told you how it will arrive.
+            {hemOn
+              ? `${garment.name} in size ${size.label}, hemmed to ${render.hemTargetCm} cm before it ships — it arrives at your length, not the rack's.`
+              : 'Nothing was charged and nothing ships. The try-on told you how it looks; Hemline told you how it will arrive.'}
           </p>
           <button className="btn ghost" onClick={onRestart}>Try another garment</button>
         </div>
@@ -35,14 +38,20 @@ export default function Checkout({ garment, size, shoe, render, onBack, onRestar
           <span className="l">{garment.name}<small>{garment.label}</small></span>
           <span className="amt">${garment.priceUsd}</span>
         </div>
-        <div className={`line${hemOn ? ' hem-line' : ''}`}>
+        <div className={`line${hemOn ? ' hem-line' : ''}${tooShort ? ' disabled' : ''}`}>
           <span className="l">
             Hem to your length ({render.hemTargetCm} cm)
-            <small>{hemOn ? 'Ships in 2 extra days' : needsHem ? `Skipping — arrives +${render.verdict.deltaCm} cm long` : 'Not needed for this size'}</small>
+            <small>
+              {tooShort
+                ? `Can't hem longer — this size arrives ${Math.abs(render.verdict.deltaCm)} cm short`
+                : hemOn ? 'Ships in 2 extra days'
+                : needsHem ? `Skipping — arrives +${render.verdict.deltaCm} cm long`
+                : 'Not needed — this size arrives at your length'}
+            </small>
           </span>
           <label className="switch">
             <input
-              type="checkbox" checked={hemOn}
+              type="checkbox" checked={hemOn} disabled={tooShort}
               onChange={e => setHemOn(e.target.checked)}
               aria-label="Add hem-to-length service"
             />

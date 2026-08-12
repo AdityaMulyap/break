@@ -60,10 +60,12 @@ export default function App() {
       )}
       {step === 'render' && (
         <Render
+          key={`${garment.id}-${size.label}-${shoe.id}`}
           benchmark={benchmark} garment={garment} size={size} shoe={shoe}
           cached={render}
           onReady={setRender}
           onCheckout={() => setStep('checkout')}
+          onChangeSize={s => { setSize(s); setRender(null); }}
         />
       )}
       {step === 'checkout' && (
