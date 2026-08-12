@@ -6,6 +6,19 @@
   "scripts": {
     "spike:shoes": "node scripts/spike-shoes.js",
     "spike:cloth": "node scripts/spike-cloth.js",
-    "test": "node --test"
+    "test": "node --test",
+    "dev": "vite web",
+    "build": "vite build web",
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "express": "5.2.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.0.5",
+    "puppeteer-core": "25.6.0",
+    "vite": "8.2.1"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "name": "Hemline",
+  "short_name": "Hemline",
+  "description": "Know if pants will arrive too long — before you buy.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2b3a8f",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

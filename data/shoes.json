@@ -1,0 +1,20 @@
+[
+  {
+    "id": "sneaker",
+    "name": "Court Sneaker",
+    "heelCm": 3,
+    "image": "/img/shoes/sneaker.jpg"
+  },
+  {
+    "id": "boot",
+    "name": "Lug-Sole Boot",
+    "heelCm": 4.5,
+    "image": "/img/shoes/boot.jpg"
+  },
+  {
+    "id": "heel",
+    "name": "Pointed Pump",
+    "heelCm": 7,
+    "image": "/img/shoes/heel.jpg"
+  }
+]

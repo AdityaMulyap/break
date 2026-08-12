@@ -1,0 +1,98 @@
+[
+  {
+    "id": "g1",
+    "name": "Slate Straight-Leg Denim",
+    "label": "Meridian & Co · 505 Regular",
+    "priceUsd": 78,
+    "image": "/img/catalog/g1.jpg",
+    "sizes": [
+      { "label": "30", "outseamCm": 100 },
+      { "label": "32", "outseamCm": 104 },
+      { "label": "34", "outseamCm": 108 }
+    ]
+  },
+  {
+    "id": "g2",
+    "name": "Coal Slim Jean",
+    "label": "Blook · Slim 32",
+    "priceUsd": 64,
+    "image": "/img/catalog/g2.jpg",
+    "sizes": [
+      { "label": "30", "outseamCm": 102 },
+      { "label": "32", "outseamCm": 106 },
+      { "label": "34", "outseamCm": 110 }
+    ]
+  },
+  {
+    "id": "g3",
+    "name": "Indigo Selvedge Taper",
+    "label": "Warp & Weft · IT-11",
+    "priceUsd": 128,
+    "image": "/img/catalog/g3.jpg",
+    "sizes": [
+      { "label": "30", "outseamCm": 101 },
+      { "label": "32", "outseamCm": 105 },
+      { "label": "34", "outseamCm": 109 }
+    ]
+  },
+  {
+    "id": "g4",
+    "name": "Stonewash Relaxed",
+    "label": "Meridian & Co · 550 Relaxed",
+    "priceUsd": 72,
+    "image": "/img/catalog/g4.jpg",
+    "sizes": [
+      { "label": "30", "outseamCm": 103 },
+      { "label": "32", "outseamCm": 107 },
+      { "label": "34", "outseamCm": 111 }
+    ]
+  },
+  {
+    "id": "g5",
+    "name": "Five-Wash Classic",
+    "label": "Ledger Denim · Assorted",
+    "priceUsd": 58,
+    "image": "/img/catalog/g5.jpg",
+    "sizes": [
+      { "label": "30", "outseamCm": 99 },
+      { "label": "32", "outseamCm": 103 },
+      { "label": "34", "outseamCm": 107 }
+    ]
+  },
+  {
+    "id": "g6",
+    "name": "Midnight Wide-Leg Trouser",
+    "label": "Atelier Nord · WL-2",
+    "priceUsd": 145,
+    "image": "/img/catalog/g6.jpg",
+    "sizes": [
+      { "label": "S", "outseamCm": 105 },
+      { "label": "M", "outseamCm": 109 },
+      { "label": "L", "outseamCm": 113 }
+    ]
+  },
+  {
+    "id": "g7",
+    "name": "Raw Denim Standard",
+    "label": "Warp & Weft · RD-01",
+    "priceUsd": 98,
+    "image": "/img/catalog/g7.jpg",
+    "sizes": [
+      { "label": "30", "outseamCm": 102 },
+      { "label": "32", "outseamCm": 106 },
+      { "label": "34", "outseamCm": 110 }
+    ]
+  },
+  {
+    "id": "g8",
+    "name": "Jet Black Slim",
+    "label": "Blook · Premium Slim",
+    "priceUsd": 69,
+    "image": "/img/catalog/g8.jpg",
+    "sizes": [
+      { "label": "30", "outseamCm": 100 },
+      { "label": "32", "outseamCm": 104 },
+      { "label": "34", "outseamCm": 108 }
+    ]
+  }
+]
