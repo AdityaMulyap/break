@@ -1,0 +1,11 @@
+{
+  "name": "break",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "spike:shoes": "node scripts/spike-shoes.js",
+    "spike:cloth": "node scripts/spike-cloth.js",
+    "test": "node --test"
+  }
+}
