@@ -16,7 +16,7 @@
   --ok-tint: oklch(0.95 0.025 152);
   --warn: oklch(0.52 0.13 65);
   --warn-tint: oklch(0.955 0.035 80);
-  --danger: oklch(0.5 0.18 27);
+  --danger: oklch(0.46 0.2 22);
   --danger-tint: oklch(0.95 0.025 27);
 
   /* type scale ×1.2 */
@@ -179,7 +179,7 @@ h2 { font-size: var(--fs-2); margin: 20px 0 10px; letter-spacing: -0.01em; }
 .linklike {
   border: 0; background: none; color: var(--primary);
   font: inherit; font-weight: 600; cursor: pointer;
-  padding: 10px 6px; margin: -10px -2px; /* 44px effective target, no layout shift */
+  padding: 10px 12px; margin: -10px -8px; /* ≥44px effective target, no layout shift */
 }
 
 /* segmented control */
@@ -187,7 +187,7 @@ h2 { font-size: var(--fs-2); margin: 20px 0 10px; letter-spacing: -0.01em; }
 .seg button {
   flex: 1; border: 0; background: transparent; color: var(--muted);
   font: inherit; font-size: var(--fs-0); font-weight: 600;
-  min-height: 40px; border-radius: 7px; cursor: pointer;
+  min-height: 44px; border-radius: 7px; cursor: pointer;
   transition: background var(--speed) var(--ease), color var(--speed) var(--ease);
 }
 .seg button[aria-pressed="true"] { background: var(--primary); color: var(--on-primary); }
@@ -225,9 +225,18 @@ h2 { font-size: var(--fs-2); margin: 20px 0 10px; letter-spacing: -0.01em; }
 
 .fit-badge {
   display: inline-block; margin-left: 8px; vertical-align: 1px;
-  font-size: 0.6875rem; font-weight: 600; color: var(--ok);
-  background: var(--ok-tint); border-radius: 999px; padding: 2px 8px;
+  font-size: 0.6875rem; font-weight: 600;
+  border-radius: 999px; padding: 2px 8px;
 }
+.fit-badge.ok { color: var(--ok); background: var(--ok-tint); }
+.fit-badge.accent { color: var(--warn); background: var(--warn-tint); }
+.fit-badge.muted { color: var(--muted); background: var(--surface); }
+
+/* size chips carry their live verdict */
+.chips button.too_short { color: var(--muted); }
+.chips button.too_short[aria-pressed="true"] { border-color: var(--muted); background: var(--muted); color: var(--bg); }
+.chips button.fits .len { color: var(--ok); opacity: 1; }
+.chips button[aria-pressed="true"] .len { color: inherit; }
 .row-card .meta { align-self: center; }
 
 /* size chips */
@@ -307,6 +316,25 @@ h2 { font-size: var(--fs-2); margin: 20px 0 10px; letter-spacing: -0.01em; }
 .numbers dd { font-weight: 700; font-variant-numeric: tabular-nums; font-size: var(--fs-1); }
 
 .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.compare.single { grid-template-columns: 1fr; }
+.compare.single .pane img { aspect-ratio: 3 / 3.4; }
+
+/* Mock renders wear a deliberate diagram treatment — honest without a confession */
+.pane.synthetic img { filter: saturate(0.7) contrast(0.96); }
+.pane.synthetic::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(oklch(0.42 0.17 262 / 0.05) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(90deg, oklch(0.42 0.17 262 / 0.05) 0 1px, transparent 1px 24px);
+}
+.pane .preview-chip {
+  position: absolute; right: 8px; bottom: 8px;
+  font-size: 0.6875rem; font-weight: 600; color: var(--primary);
+  background: oklch(1 0 0 / 0.85); border-radius: 999px; padding: 3px 8px;
+  backdrop-filter: blur(4px);
+}
+
+.receipt-note { margin: -8px 0 16px; }
 .pane { position: relative; border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); animation: rise-in 300ms var(--ease) both; }
 .pane:nth-child(2) { animation-delay: 90ms; }
 .pane img { width: 100%; aspect-ratio: 3 / 4.6; object-fit: cover; display: block; }

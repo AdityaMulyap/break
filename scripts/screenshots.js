@@ -40,20 +40,20 @@ await tapByText('.seg button', 'Half break');
 await shot('1-measure');
 await tapByText('.btn', 'Save 100 cm');
 
-// 2 catalog
+// 2 shoes (now before the catalog — the shoe makes length computable)
 await page.waitForSelector('.row-card img');
-await shot('2-catalog');
+await shot('2-shoes');
+await tapByText('.row-card', 'Court Sneaker');
+await tapByText('.btn', 'Browse the rack');
+
+// 3 catalog with live verdicts
+await page.waitForSelector('.row-card img');
+await shot('3-catalog');
 await tapByText('.row-card', 'Slate Straight-Leg');
 await page.waitForSelector('.chips button');
 await tapByText('.chips button', '34');
-await shot('2-catalog-size');
-await tapByText('.btn', 'Continue with size 34');
-
-// 3 shoes
-await page.waitForSelector('.row-card img');
-await shot('3-shoes');
-await tapByText('.row-card', 'Court Sneaker');
-await tapByText('.btn', 'Check the length');
+await shot('3-catalog-size');
+await tapByText('.btn', 'See it on you');
 
 // 4 loading then verdict
 await page.waitForSelector('.tasklist');

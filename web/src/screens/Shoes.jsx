@@ -1,26 +1,35 @@
 import React, { useEffect, useState } from 'react';
 
-export default function Shoes({ onPick }) {
+export default function Shoes({ selected, onPick }) {
   const [shoes, setShoes] = useState(null);
-  const [sel, setSel] = useState(null);
+  const [sel, setSel] = useState(selected ?? null);
   const [error, setError] = useState(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    setError(null);
     fetch('/api/shoes')
-      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(setShoes)
-      .catch(e => setError(String(e.message || e)));
-  }, []);
+      .catch(() => setError(true));
+  }, [attempt]);
 
   return (
     <section className="screen">
       <h1>Which shoes will you wear them with?</h1>
       <p className="lede">
-        Heel height moves the hem. The verdict — and the try-on render — use
-        the exact shoe you pick here.
+        Heel height moves the hem, so the shoe comes first — the rack you're
+        about to see is measured against it.
       </p>
 
-      {error && <p className="error-note">Couldn't load shoes ({error}).</p>}
+      {error && (
+        <div className="error-note">
+          <p>Couldn't load the shoes. Check your connection and try again.</p>
+          <button className="btn ghost" style={{ marginTop: 10 }} onClick={() => setAttempt(a => a + 1)}>
+            Try again
+          </button>
+        </div>
+      )}
 
       <div className="stack">
         {shoes?.map(s => (
@@ -41,7 +50,7 @@ export default function Shoes({ onPick }) {
 
       <div className="cta-dock">
         <button className="btn" disabled={!sel} onClick={() => onPick(sel)}>
-          {sel ? `Check the length with the ${sel.name}` : 'Pick a shoe'}
+          {sel ? `Browse the rack with the ${sel.name}` : 'Pick a shoe'}
         </button>
       </div>
     </section>

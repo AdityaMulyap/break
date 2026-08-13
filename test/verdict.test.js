@@ -12,7 +12,7 @@ test('5cm longer garment on flats is too long by 5', () => {
   const r = verdict({ benchmarkCm: 100, garmentCm: 105, heelCm: 0 });
   assert.equal(r.verdict, 'too_long');
   assert.equal(r.deltaCm, 5);
-  assert.match(r.message, /5cm too long/);
+  assert.match(r.message, /5 cm too long/);
 });
 
 test('7cm heel absorbs a 7cm longer garment', () => {
@@ -42,7 +42,7 @@ test('tolerance band counts as fits at the edge', () => {
 test('deltas round to one decimal', () => {
   const r = verdict({ benchmarkCm: 100, garmentCm: 103.26 });
   assert.equal(r.deltaCm, 3.3);
-  assert.match(r.message, /3\.3cm too long/);
+  assert.match(r.message, /3\.3 cm too long/);
 });
 
 test('hemTargetCm returns ideal length for user + shoe', () => {

@@ -6,6 +6,7 @@ export default function Checkout({ garment, size, shoe, render, onBack, onRestar
   const verdictKind = render?.verdict?.verdict;
   const needsHem = verdictKind === 'too_long';
   const tooShort = verdictKind === 'too_short';
+  const hemLocked = tooShort || verdictKind === 'fits'; // no paid no-op hems
   const [hemOn, setHemOn] = useState(needsHem);
   const [placed, setPlaced] = useState(false);
 
@@ -38,7 +39,7 @@ export default function Checkout({ garment, size, shoe, render, onBack, onRestar
           <span className="l">{garment.name}<small>{garment.label}</small></span>
           <span className="amt">${garment.priceUsd}</span>
         </div>
-        <div className={`line${hemOn ? ' hem-line' : ''}${tooShort ? ' disabled' : ''}`}>
+        <div className={`line${hemOn ? ' hem-line' : ''}${hemLocked ? ' disabled' : ''}`}>
           <span className="l">
             Hem to your length ({render.hemTargetCm} cm)
             <small>
@@ -51,7 +52,7 @@ export default function Checkout({ garment, size, shoe, render, onBack, onRestar
           </span>
           <label className="switch">
             <input
-              type="checkbox" checked={hemOn} disabled={tooShort}
+              type="checkbox" checked={hemOn} disabled={hemLocked}
               onChange={e => setHemOn(e.target.checked)}
               aria-label="Add hem-to-length service"
             />

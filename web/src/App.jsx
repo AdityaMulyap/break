@@ -5,25 +5,41 @@ import Shoes from './screens/Shoes.jsx';
 import Render from './screens/Render.jsx';
 import Checkout from './screens/Checkout.jsx';
 
-const STEPS = ['measure', 'catalog', 'shoes', 'render', 'checkout'];
+// Shoes come before the catalog: heel height is what makes length
+// computable, so the rack can show a live verdict on every size.
+const STEPS = ['measure', 'shoes', 'catalog', 'render', 'checkout'];
 const BENCH_KEY = 'hemline.benchmark';
+const SESSION_KEY = 'hemline.session';
+
+const readJson = (store, key) => {
+  try { return JSON.parse(store.getItem(key)) ?? null; } catch { return null; }
+};
 
 export default function App() {
-  const [benchmark, setBenchmark] = useState(() => {
-    try { return JSON.parse(localStorage.getItem(BENCH_KEY)) ?? null; } catch { return null; }
+  const [benchmark, setBenchmark] = useState(() => readJson(localStorage, BENCH_KEY));
+  // Picks survive an accidental (pull-to-)refresh via sessionStorage.
+  const saved = readJson(sessionStorage, SESSION_KEY) ?? {};
+  const [shoe, setShoe] = useState(saved.shoe ?? null);
+  const [garment, setGarment] = useState(saved.garment ?? null);
+  const [size, setSize] = useState(saved.size ?? null);
+  const [step, setStep] = useState(() => {
+    if (!benchmark) return 'measure';
+    if (saved.step && STEPS.includes(saved.step) && saved.step !== 'render') return saved.step;
+    if (saved.step === 'render' && saved.garment && saved.size && saved.shoe) return 'render';
+    return 'shoes';
   });
-  const [step, setStep] = useState(benchmark ? 'catalog' : 'measure');
-  const [garment, setGarment] = useState(null);
-  const [size, setSize] = useState(null);
-  const [shoe, setShoe] = useState(null);
   const [render, setRender] = useState(null); // { verdict, hemTargetCm, result }
 
   const stepIdx = STEPS.indexOf(step);
 
+  useEffect(() => {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ step, shoe, garment, size }));
+  }, [step, shoe, garment, size]);
+
   const saveBenchmark = b => {
     setBenchmark(b);
     localStorage.setItem(BENCH_KEY, JSON.stringify(b));
-    setStep('catalog');
+    setStep('shoes');
   };
 
   const back = () => {
@@ -47,16 +63,17 @@ export default function App() {
       {step === 'measure' && (
         <Measure initial={benchmark} onDone={saveBenchmark} />
       )}
+      {step === 'shoes' && (
+        <Shoes selected={shoe} onPick={sh => { setShoe(sh); setRender(null); setStep('catalog'); }} />
+      )}
       {step === 'catalog' && (
         <Catalog
           selected={{ garment, size }}
-          onPick={(g, s) => { setGarment(g); setSize(s); setStep('shoes'); }}
-          onEditMeasure={() => setStep('measure')}
+          shoe={shoe}
           benchmark={benchmark}
+          onPick={(g, s) => { setGarment(g); setSize(s); setRender(null); setStep('render'); }}
+          onEditMeasure={() => setStep('measure')}
         />
-      )}
-      {step === 'shoes' && (
-        <Shoes onPick={sh => { setShoe(sh); setRender(null); setStep('render'); }} />
       )}
       {step === 'render' && (
         <Render
@@ -72,7 +89,7 @@ export default function App() {
         <Checkout
           garment={garment} size={size} shoe={shoe} render={render}
           onBack={() => setStep('render')}
-          onRestart={() => { setGarment(null); setSize(null); setShoe(null); setRender(null); setStep('catalog'); }}
+          onRestart={() => { setGarment(null); setSize(null); setRender(null); setStep('catalog'); }}
         />
       )}
     </div>

@@ -72,8 +72,15 @@ async function runMockJob(job) {
     job.stage = stage; job.pct = pct;
     await new Promise(r => setTimeout(r, ms));
   };
-  await step('shoes_vto', 10, 1800);
-  await step('verdict', 40, 600);
+  const tooShort = job.input.verdict.verdict === 'too_short';
+  await step('shoes_vto', tooShort ? 30 : 10, 1800);
+  await step('verdict', tooShort ? 80 : 40, 600);
+  if (tooShort) {
+    // A hem can't fix this size — skip the clothes renders entirely.
+    job.result = { baseImage: '/mock/user.jpg', mock: true };
+    job.stage = 'done'; job.pct = 100; job.done = true;
+    return;
+  }
   await step('cloth_vto_shipped', 55, 1600);
   await step('cloth_vto_hemmed', 80, 1600);
   job.result = {
@@ -94,6 +101,12 @@ async function runRealJob(job) {
   job.stage = 'shoes_vto'; job.pct = 5;
   const base = await shoesVto(userPhoto, shoeImg, gender);
   job.stage = 'verdict'; job.pct = 40;
+  if (job.input.verdict.verdict === 'too_short') {
+    // No clothes renders for an unfixable size — saves 2 API units per run.
+    job.result = { baseImage: toCacheUrl(base.imagePath), mock: false };
+    job.stage = 'done'; job.pct = 100; job.done = true;
+    return;
+  }
   job.stage = 'cloth_vto_shipped'; job.pct = 50;
   const shipped = await clothVto(base.imagePath, garmentImg, 'lower_body');
   job.stage = 'cloth_vto_hemmed'; job.pct = 75;
