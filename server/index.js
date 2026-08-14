@@ -131,7 +131,8 @@ app.use('/mock', express.static(path.join(ROOT, 'assets/input')));
 const dist = path.join(ROOT, 'web/dist');
 if (existsSync(dist)) {
   app.use(express.static(dist));
-  app.get(/^\/(?!api|renders|mock).*/, (_req, res) => res.sendFile(path.join(dist, 'index.html')));
+  app.get('/finder', (_req, res) => res.sendFile(path.join(dist, 'finder.html')));
+  app.get(/^\/(?!api|renders|mock|finder).*/, (_req, res) => res.sendFile(path.join(dist, 'index.html')));
 } else {
   app.use('/img', express.static(path.join(ROOT, 'web/public/img')));
 }
