@@ -5,16 +5,24 @@ import { Scroll, H1 } from "./Frame.jsx";
 export function Pdp({ item, verdict, answered, onOpenVerdict, onAdd, waist, onWaist, len, onLen }) {
   const [wash, setWash] = React.useState(0);
   const [saved, setSaved] = React.useState(false);
+  const [shot, setShot] = React.useState(0);
+
+  // Gallery: the card shot plus two detail crops generated alongside it,
+  // then the wash swatches as color tiles.
+  const gallery = [item.image, item.image.replace(".jpg", "-d1.jpg"), item.image.replace(".jpg", "-d2.jpg")];
+  const thumbs = [...gallery, ...item.washes.map(w => w.color)].slice(0, 5);
 
   return (
     <>
       <Scroll pad={false}>
-        <PhotoFrame ratio="4 / 5" label={item.name.toUpperCase() + " · " + item.wash.toUpperCase()} src={item.image} alt={item.name} style={{ borderRadius: 0 }} />
+        <PhotoFrame ratio="4 / 5" label={item.name.toUpperCase() + " · " + item.wash.toUpperCase()} src={gallery[shot]} alt={item.name} style={{ borderRadius: 0 }} />
         <div style={{ display: "flex", gap: "var(--space-2)", padding: "var(--space-2) var(--page-margin) 0" }}>
-          {[item.image, ...item.washes.map(w => w.color)].slice(0, 5).map((t, i) => (
-            <span key={i} style={{ width: 52, height: 52, borderRadius: 10, border: i === 0 ? "1px solid var(--border-selected)" : "var(--hairline)", overflow: "hidden", flex: "0 0 auto", background: t.startsWith("#") ? t : undefined }}>
-              {t.startsWith("/") ? <img src={t} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : null}
-            </span>
+          {thumbs.map((t, i) => (
+            <button key={i} type="button" onClick={t.startsWith("/") ? () => setShot(i) : undefined}
+              aria-label={t.startsWith("/") ? `Photo ${i + 1}` : "Wash swatch"}
+              style={{ width: 52, height: 52, borderRadius: 10, padding: 0, cursor: t.startsWith("/") ? "pointer" : "default", border: i === shot ? "1px solid var(--border-selected)" : "var(--hairline)", overflow: "hidden", flex: "0 0 auto", background: t.startsWith("#") ? t : "none" }}>
+              {t.startsWith("/") ? <img src={t} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
+            </button>
           ))}
         </div>
         <div style={{ padding: "var(--space-5) var(--page-margin) var(--space-8)", display: "grid", gap: "var(--space-5)" }}>

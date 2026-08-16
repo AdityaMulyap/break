@@ -6,7 +6,7 @@ import { Pdp } from "./store/Pdp.jsx";
 import { BreakSheet } from "./store/BreakSheet.jsx";
 import { FitSetup, FitConfirm } from "./store/FitSetup.jsx";
 import { TryOnAsk, TryOnRender } from "./store/TryOn.jsx";
-import { Checkout, Confirmed } from "./store/Checkout.jsx";
+import { Checkout } from "./store/Checkout.jsx";
 import { BreakMark } from "./ds";
 import { fitVerdict } from "../../lib/fit.js";
 
@@ -90,7 +90,7 @@ export default function App() {
     if ((target === "pdp" || target === "ask") && !item) return "catalog";
     if (target === "render" && !(item && fit)) return item ? "pdp" : "catalog";
     if (target === "checkout" && !bag) return item ? "pdp" : "catalog";
-    if (target === "done" && !order) return "home";
+    if (target === "done") return order ? "checkout" : "home"; // confirmation now overlays the bag
     if (target === "fitconfirm") return "fitsetup";
     return target ?? "home";
   }
@@ -200,9 +200,12 @@ export default function App() {
           onCheckout={() => { setBag({ item, waist, len: length.label, garmentCm: length.inseamCm }); setScreen("checkout"); }} />
       )}
 
-      {screen === "checkout" && bag && <Checkout bag={bag} verdict={verdict} shoe={shoe} hemPref={hemPref} onHemPref={setHemPref} onPlace={o => { setOrder(o); setScreen("done"); }} />}
-
-      {screen === "done" && <Confirmed order={order} itemShortName={shortName} onRestart={() => setScreen("home")} />}
+      {screen === "checkout" && bag && (
+        <Checkout bag={bag} verdict={verdict} shoe={shoe} hemPref={hemPref} onHemPref={setHemPref}
+          order={order} itemShortName={shortName || bag.item.name.split(" ").slice(0, 2).join(" ")}
+          onPlace={setOrder}
+          onRestart={() => { setOrder(null); setBag(null); setScreen("home"); }} />
+      )}
 
       {(screen === "home" || screen === "catalog") && (
         <TabBar active={screen === "home" ? "Home" : "Shop"}

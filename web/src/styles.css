@@ -21,6 +21,18 @@ button {
   -webkit-user-select: none;
 }
 
+/* Order-confirmation banner rises over the bag, 280ms sheet motion. */
+.confirm-banner {
+  animation: confirm-rise var(--dur-sheet) var(--ease-standard);
+}
+@keyframes confirm-rise {
+  from { transform: translateY(16px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .confirm-banner { animation: none; }
+}
+
 * { box-sizing: border-box; }
 
 html, body, #root { height: 100%; }

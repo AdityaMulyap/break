@@ -4,12 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "spike:shoes": "node scripts/spike-shoes.js",
-    "spike:cloth": "node scripts/spike-cloth.js",
+    "spike:shoes": "node --env-file-if-exists=.env scripts/spike-shoes.js",
+    "spike:cloth": "node --env-file-if-exists=.env scripts/spike-cloth.js",
     "test": "node --test",
     "dev": "vite web",
     "build": "vite build web",
-    "start": "node server/index.js"
+    "start": "node --env-file-if-exists=.env server/index.js"
   },
   "dependencies": {
     "express": "5.2.1",

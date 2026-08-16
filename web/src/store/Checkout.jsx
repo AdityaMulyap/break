@@ -10,7 +10,7 @@ const TAX_RATE = 0.07;
 // Two confidence states survive underneath: when the verdict is unsure
 // (stretch fabric), the hem sells as a prepaid credit instead —
 // the irreversible step is only sold once the reversible ones are resolved.
-export function Checkout({ bag, verdict, shoe, hemPref, onHemPref, onPlace }) {
+export function Checkout({ bag, verdict, shoe, hemPref, onHemPref, order, itemShortName, onPlace, onRestart }) {
   const offerHem = verdict?.tone === "long";
   const confident = verdict?.tone === "long" || verdict?.tone === "fits";
   const [demoLow, setDemoLow] = React.useState(false);
@@ -98,29 +98,25 @@ export function Checkout({ bag, verdict, shoe, hemPref, onHemPref, onPlace }) {
         </div>
       </Scroll>
       <FootBar>
-        <Button full onClick={() => onPlace({ hemmed: hemOn, low, total })}>Checkout</Button>
+        <Button full disabled={Boolean(order)} onClick={() => onPlace({ hemmed: hemOn, low, total })}>Checkout</Button>
       </FootBar>
-    </>
-  );
-}
 
-export function Confirmed({ order, itemShortName, onRestart }) {
-  const headline = order?.hemmed ? `${itemShortName}, hemmed right for you` : "Order confirmed";
-  const sub = order?.low
-    ? "Order placed. Ships unhemmed with your hem credit — try it first, we hem it after."
-    : order?.hemmed
-      ? "Order placed. Arrives hemmed in 5 to 8 days."
-      : "Order placed. Arrives in 4 to 6 days.";
-  return (
-    <Scroll>
-      <div style={{ display: "grid", gap: "var(--space-5)", paddingTop: "var(--space-8)" }}>
-        <div style={{ background: "var(--accent)", borderRadius: "var(--radius-plugin)", padding: "var(--space-5)", display: "grid", gap: "var(--space-2)" }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: "var(--fw-semibold)", letterSpacing: "var(--ls-brandmark)", textTransform: "uppercase", color: "rgba(255,255,255,.75)" }}>Powered by Break</span>
-          <span style={{ font: "var(--text-h1)", color: "#fff", textWrap: "balance" }}>{headline}</span>
-          <span style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "rgba(255,255,255,.85)" }}>{sub}</span>
+      {order ? (
+        <div className="confirm-banner" style={{ position: "absolute", left: 8, right: 8, bottom: 8, zIndex: 30 }}>
+          <div style={{ background: "var(--accent)", borderRadius: "var(--radius-plugin)", padding: "var(--space-5)", display: "grid", gap: "var(--space-2)", boxShadow: "var(--shadow-sheet)" }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, fontWeight: "var(--fw-semibold)", letterSpacing: "var(--ls-brandmark)", textTransform: "uppercase", color: "rgba(255,255,255,.75)" }}>Powered by Break</span>
+            <span style={{ font: "var(--text-h1)", color: "#fff", textWrap: "balance" }}>{order.hemmed ? `${itemShortName}, hemmed right for you` : "Order confirmed"}</span>
+            <span style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "rgba(255,255,255,.85)" }}>
+              {order.low
+                ? "Order placed. Ships unhemmed with your hem credit — try it first, we hem it after."
+                : order.hemmed
+                  ? "Order placed. Arrives hemmed in 5 to 8 days."
+                  : "Order placed. Arrives in 4 to 6 days."}
+            </span>
+            <button type="button" onClick={onRestart} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", font: "var(--text-small-role)", color: "#fff", textDecoration: "underline", textUnderlineOffset: "3px", justifySelf: "start" }}>Back to the store</button>
+          </div>
         </div>
-        <Button variant="quiet" onClick={onRestart}>Back to the store</Button>
-      </div>
-    </Scroll>
+      ) : null}
+    </>
   );
 }
