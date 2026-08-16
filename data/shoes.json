@@ -1,20 +1,6 @@
 [
-  {
-    "id": "sneaker",
-    "name": "Court Sneaker",
-    "heelCm": 3,
-    "image": "/img/shoes/sneaker.jpg"
-  },
-  {
-    "id": "boot",
-    "name": "Lug-Sole Boot",
-    "heelCm": 4.5,
-    "image": "/img/shoes/boot.jpg"
-  },
-  {
-    "id": "heel",
-    "name": "Pointed Pump",
-    "heelCm": 7,
-    "image": "/img/shoes/heel.jpg"
-  }
+  { "id": "flats", "name": "Flats", "offsetCm": -1, "image": "/img/shoes/flats.jpg" },
+  { "id": "sneakers", "name": "Sneakers", "offsetCm": 0, "image": "/img/shoes/sneaker.jpg" },
+  { "id": "heels", "name": "Heels", "offsetCm": 4, "image": "/img/shoes/heel.jpg" },
+  { "id": "boots", "name": "Boots", "offsetCm": 2, "image": "/img/shoes/boot.jpg" }
 ]

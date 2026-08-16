@@ -1,0 +1,51 @@
+:root{
+/* base palette — locked by the brief, do not drift */
+--ink:#1A1A1A;--paper:#FFFFFF;--section:#F5F4F1;--border:#D9D7D2;--indigo:#1E3A5F;
+--ink-60:#5A5A5A;--ink-45:#7A7A7A;--slate:#5A6470;
+/* verdict palette */
+--warn-fg:#8A4B08;--warn-bg:#FBF1E2;--confirm-fg:#2F6B4F;--confirm-bg:#ECF4EF;--neutral-fg:#5A6470;--neutral-bg:#F2F3F5;
+/* semantic aliases — reach for these in components */
+--text-primary:var(--ink);--text-secondary:var(--ink-60);--text-muted:var(--ink-45);--text-link:var(--indigo);--text-on-ink:var(--paper);
+--surface-page:var(--paper);--surface-section:var(--section);--surface-card:var(--paper);--surface-plugin:var(--paper);--surface-scrim:rgba(26,26,26,.45);
+--border-hairline:var(--border);--border-strong:var(--ink);--border-selected:var(--indigo);
+--accent:var(--indigo);--accent-soft:#EAEEF3;
+--btn-primary-bg:var(--ink);--btn-primary-fg:var(--paper);--btn-primary-bg-press:#000000;
+--btn-secondary-fg:var(--ink);--btn-secondary-border:var(--ink);
+--state-warn-fg:var(--warn-fg);--state-warn-bg:var(--warn-bg);
+--state-confirm-fg:var(--confirm-fg);--state-confirm-bg:var(--confirm-bg);--surface-verdict:var(--section);
+--state-neutral-fg:var(--neutral-fg);--state-neutral-bg:var(--neutral-bg);
+--table-header-bg:var(--ink);--table-header-fg:var(--paper);
+--shimmer-base:#EDEBE7;--shimmer-sheen:#F7F6F3
+}
+
+:root{
+--fs-h1:22px;--fs-body:16px;--fs-small:13px;--fs-tiny:11px;
+--fw-regular:400;/* @kind font */--fw-medium:500;/* @kind font */--fw-semibold:600;/* @kind font */--fw-bold:700;/* @kind font */
+--lh-h1:1.25;/* @kind font */--lh-body:1.5;/* @kind font */--lh-small:1.4;/* @kind font */--lh-tiny:1.35;/* @kind font */
+--ls-wordmark:.18em;--ls-brandmark:.14em;--ls-label:.08em;--ls-normal:0;/* @kind font */
+/* semantic type roles */
+--text-h1:var(--fw-semibold) var(--fs-h1)/var(--lh-h1) var(--font-sans);
+--text-body-role:var(--fw-regular) var(--fs-body)/var(--lh-body) var(--font-sans);
+--text-small-role:var(--fw-medium) var(--fs-small)/var(--lh-small) var(--font-sans);
+--text-tiny-role:var(--fw-medium) var(--fs-tiny)/var(--lh-tiny) var(--font-sans)
+}
+
+:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;--space-16:64px;
+--page-margin:20px;--block-gap:32px;--stack-gap:12px;--grid-gap:8px;
+--screen-width:390px;/* @kind spacing */--tap-min:44px;/* @kind spacing */--sticky-bar-h:64px/* @kind spacing */
+}
+
+:root{
+/* the radius split IS the brand: store chrome is square, the plugin is software */
+--radius-store:2px;--radius-plugin:10px;--radius-pill:999px;
+--hairline:1px solid var(--border-hairline);/* @kind other */--rule-strong:1px solid var(--ink);/* @kind other */
+/* the store uses no drop shadows; only lifted plugin surfaces get one */
+--shadow-none:none;--shadow-sheet:0 -8px 32px rgba(26,26,26,.16);--shadow-plugin:0 1px 2px rgba(26,26,26,.06)
+}
+
+:root{
+--ease-standard:cubic-bezier(.2,0,0,1);/* @kind other */--ease-out:cubic-bezier(0,0,.2,1);/* @kind other */
+--dur-fast:120ms;/* @kind other */--dur-base:200ms;/* @kind other */--dur-sheet:280ms;/* @kind other */--dur-shimmer:1400ms;/* @kind other */
+--press-scale:.985;/* @kind other */
+}

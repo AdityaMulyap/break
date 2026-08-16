@@ -1,97 +1,124 @@
-import React, { useEffect, useState } from 'react';
-import Measure from './screens/Measure.jsx';
-import Catalog from './screens/Catalog.jsx';
-import Shoes from './screens/Shoes.jsx';
-import Render from './screens/Render.jsx';
-import Checkout from './screens/Checkout.jsx';
+import React, { useEffect, useState } from "react";
+import { Shell, StoreHeader } from "./store/Frame.jsx";
+import { Home } from "./store/Home.jsx";
+import { Catalog } from "./store/Catalog.jsx";
+import { Pdp } from "./store/Pdp.jsx";
+import { BreakSheet } from "./store/BreakSheet.jsx";
+import { FitSetup, FitConfirm } from "./store/FitSetup.jsx";
+import { TryOnAsk, TryOnRender } from "./store/TryOn.jsx";
+import { Checkout, Confirmed } from "./store/Checkout.jsx";
+import { BreakMark } from "./ds";
+import { fitVerdict } from "../../lib/fit.js";
 
-// Shoes come before the catalog: heel height is what makes length
-// computable, so the rack can show a live verdict on every size.
-const STEPS = ['measure', 'shoes', 'catalog', 'render', 'checkout'];
-const BENCH_KEY = 'hemline.benchmark';
-const SESSION_KEY = 'hemline.session';
+const FIT_KEY = "break.fit";
 
-const readJson = (store, key) => {
-  try { return JSON.parse(store.getItem(key)) ?? null; } catch { return null; }
+const readFit = () => {
+  try { return JSON.parse(localStorage.getItem(FIT_KEY)) ?? null; } catch { return null; }
 };
 
 export default function App() {
-  const [benchmark, setBenchmark] = useState(() => readJson(localStorage, BENCH_KEY));
-  // Picks survive an accidental (pull-to-)refresh via sessionStorage.
-  const saved = readJson(sessionStorage, SESSION_KEY) ?? {};
-  const [shoe, setShoe] = useState(saved.shoe ?? null);
-  const [garment, setGarment] = useState(saved.garment ?? null);
-  const [size, setSize] = useState(saved.size ?? null);
-  const [step, setStep] = useState(() => {
-    if (!benchmark) return 'measure';
-    if (saved.step && STEPS.includes(saved.step) && saved.step !== 'render') return saved.step;
-    if (saved.step === 'render' && saved.garment && saved.size && saved.shoe) return 'render';
-    return 'shoes';
-  });
-  const [render, setRender] = useState(null); // { verdict, hemTargetCm, result }
-
-  const stepIdx = STEPS.indexOf(step);
+  const [data, setData] = useState(null); // { catalog, shoes, benchmarks }
+  const [screen, setScreen] = useState("home");
+  const [fit, setFitState] = useState(readFit);
+  const [item, setItem] = useState(null);
+  const [waist, setWaist] = useState("28");
+  const [len, setLen] = useState(null);
+  const [sheet, setSheet] = useState(false);
+  const [answered, setAnswered] = useState(false);
+  const [bag, setBag] = useState(null);
+  const [order, setOrder] = useState(null);
+  const [seenPhotoAsk, setSeenPhotoAsk] = useState(false);
+  const [setupFit, setSetupFit] = useState(null); // pending fit on the full-screen setup path
 
   useEffect(() => {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ step, shoe, garment, size }));
-  }, [step, shoe, garment, size]);
+    Promise.all([
+      fetch("/api/catalog").then(r => r.json()),
+      fetch("/api/shoes").then(r => r.json()),
+      fetch("/api/benchmarks").then(r => r.json()),
+    ]).then(([catalog, shoes, benchmarks]) => setData({ catalog, shoes, benchmarks }));
+  }, []);
 
-  const saveBenchmark = b => {
-    setBenchmark(b);
-    localStorage.setItem(BENCH_KEY, JSON.stringify(b));
-    setStep('shoes');
+  const setFit = f => {
+    setFitState(f);
+    if (f) localStorage.setItem(FIT_KEY, JSON.stringify(f));
+    else localStorage.removeItem(FIT_KEY);
   };
 
-  const back = () => {
-    if (stepIdx > 0) setStep(STEPS[stepIdx - 1]);
+  if (!data) return <Shell><StoreHeader /><div /></Shell>;
+
+  const shoe = data.shoes.find(s => s.id === (fit?.shoeId ?? "sneakers"));
+  const length = item?.lengths.find(l => l.label === len) ?? item?.lengths[0];
+  const verdict = fit && item
+    ? fitVerdict({ benchmarkCm: fit.benchmarkCm, garmentCm: length.inseamCm, shoe, stretch: item.stretch })
+    : null;
+  const shortName = item ? item.name.split(" ").slice(0, 2).join(" ") : "";
+
+  const openItem = i => {
+    setItem(i);
+    setLen(i.lengths[0].label);
+    setWaist(i.waists.includes("28") ? "28" : i.waists[0]);
+    setAnswered(false);
+    setScreen("pdp");
   };
 
-  useEffect(() => { window.scrollTo(0, 0); }, [step]);
+  const back = {
+    catalog: "home", pdp: "catalog", fitsetup: "catalog", fitconfirm: null,
+    ask: "pdp", render: seenPhotoAsk ? "ask" : "pdp", checkout: "pdp", done: null, home: null,
+  };
 
   return (
-    <div className="shell">
-      <header className="topbar">
-        {stepIdx > 0 && step !== 'checkout' && (
-          <button className="back" onClick={back} aria-label="Back">‹</button>
-        )}
-        <span className="wordmark">Hemline</span>
-        <span className="steps" aria-label={`Step ${stepIdx + 1} of ${STEPS.length}`}>
-          {STEPS.map((s, i) => <i key={s} className={i <= stepIdx ? 'on' : ''} />)}
-        </span>
-      </header>
+    <Shell>
+      <StoreHeader
+        onBack={back[screen] ? () => setScreen(back[screen]) : undefined}
+        title={screen === "fitsetup" || screen === "fitconfirm" ? <BreakMark fn="MY FIT" /> : undefined}
+      />
 
-      {step === 'measure' && (
-        <Measure initial={benchmark} onDone={saveBenchmark} />
+      {screen === "home" && <Home catalog={data.catalog} onShop={() => setScreen("catalog")} onOpen={openItem} />}
+
+      {screen === "catalog" && (
+        <Catalog catalog={data.catalog} fit={fit} shoe={shoe} onOpen={openItem}
+          onSetFit={() => setScreen("fitsetup")} onEditFit={() => setScreen("fitsetup")} />
       )}
-      {step === 'shoes' && (
-        <Shoes selected={shoe} onPick={sh => { setShoe(sh); setRender(null); setStep('catalog'); }} />
+
+      {screen === "fitsetup" && (
+        <div style={{ overflowY: "auto", padding: "var(--space-6) var(--page-margin) var(--space-8)" }}>
+          <FitSetup benchmarks={data.benchmarks} shoes={data.shoes} initialShoe={fit?.shoeId ?? "sneakers"}
+            onDone={f => { setSetupFit(f); setScreen("fitconfirm"); }} />
+        </div>
       )}
-      {step === 'catalog' && (
-        <Catalog
-          selected={{ garment, size }}
-          shoe={shoe}
-          benchmark={benchmark}
-          onPick={(g, s) => { setGarment(g); setSize(s); setRender(null); setStep('render'); }}
-          onEditMeasure={() => setStep('measure')}
-        />
+
+      {screen === "fitconfirm" && setupFit && (
+        <div style={{ overflowY: "auto", padding: "var(--space-6) var(--page-margin) var(--space-8)" }}>
+          <FitConfirm fit={setupFit} onContinue={() => { setFit(setupFit); setScreen("catalog"); }} />
+        </div>
       )}
-      {step === 'render' && (
-        <Render
-          key={`${garment.id}-${size.label}-${shoe.id}`}
-          benchmark={benchmark} garment={garment} size={size} shoe={shoe}
-          cached={render}
-          onReady={setRender}
-          onCheckout={() => setStep('checkout')}
-          onChangeSize={s => { setSize(s); setRender(null); }}
-        />
+
+      {screen === "pdp" && item && (
+        <Pdp item={item} verdict={verdict} answered={answered}
+          waist={waist} onWaist={setWaist} len={len} onLen={setLen}
+          onOpenVerdict={() => { setSheet(true); if (fit) setAnswered(true); }}
+          onAdd={() => { setBag({ item, waist, len, garmentCm: length.inseamCm }); setScreen("checkout"); }} />
       )}
-      {step === 'checkout' && (
-        <Checkout
-          garment={garment} size={size} shoe={shoe} render={render}
-          onBack={() => setStep('render')}
-          onRestart={() => { setGarment(null); setSize(null); setRender(null); setStep('catalog'); }}
-        />
+
+      {screen === "ask" && <TryOnAsk onPhoto={() => { setSeenPhotoAsk(true); setScreen("render"); }} onAvatar={() => { setSeenPhotoAsk(true); setScreen("render"); }} />}
+
+      {screen === "render" && item && fit && (
+        <TryOnRender item={item} fit={fit} shoe={shoe} lengthLabel={length.label}
+          onRetry={() => setScreen("ask")}
+          onCheckout={() => { setBag({ item, waist, len: length.label, garmentCm: length.inseamCm }); setScreen("checkout"); }} />
       )}
-    </div>
+
+      {screen === "checkout" && bag && <Checkout bag={bag} verdict={verdict} onPlace={o => { setOrder(o); setScreen("done"); }} />}
+
+      {screen === "done" && <Confirmed order={order} itemShortName={shortName} onRestart={() => setScreen("home")} />}
+
+      {screen === "pdp" && item && (
+        <BreakSheet open={sheet} item={item} lengthLabel={length?.label} fit={fit}
+          shoes={data.shoes} benchmarks={data.benchmarks}
+          onFit={f => { setFit(f); setAnswered(true); }}
+          onClose={() => setSheet(false)}
+          onSeeIt={() => { setSheet(false); setScreen(seenPhotoAsk ? "render" : "ask"); }} />
+      )}
+    </Shell>
   );
 }

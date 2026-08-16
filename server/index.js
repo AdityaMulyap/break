@@ -10,7 +10,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomUUID } from 'node:crypto';
-import { verdict, hemTargetCm } from '../lib/verdict.js';
+import { fitVerdict, hemTargetCm } from '../lib/fit.js';
 import { shoesVto, clothVto } from './lib/youcam.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -19,12 +19,14 @@ const MOCK = process.env.HEMLINE_MOCK === '1' || !process.env.YOUCAM_API_KEY;
 
 const catalog = JSON.parse(readFileSync(path.join(ROOT, 'data/catalog.json'), 'utf8'));
 const shoes = JSON.parse(readFileSync(path.join(ROOT, 'data/shoes.json'), 'utf8'));
+const benchmarks = JSON.parse(readFileSync(path.join(ROOT, 'data/benchmarks.json'), 'utf8'));
 
 const app = express();
 app.use(express.json());
 
 app.get('/api/catalog', (_req, res) => res.json(catalog));
 app.get('/api/shoes', (_req, res) => res.json(shoes));
+app.get('/api/benchmarks', (_req, res) => res.json(benchmarks));
 app.get('/api/config', (_req, res) => res.json({ mock: MOCK }));
 
 // In-memory render jobs. Stages mirror the real chain so the UI is honest:
@@ -32,16 +34,16 @@ app.get('/api/config', (_req, res) => res.json({ mock: MOCK }));
 const jobs = new Map();
 
 app.post('/api/render', (req, res) => {
-  const { garmentId, sizeLabel, shoeId, benchmarkCm, breakPref = 'half_break', gender = 'male' } = req.body ?? {};
+  const { garmentId, lengthLabel, shoeId, benchmarkCm, gender = 'female' } = req.body ?? {};
   const garment = catalog.find(g => g.id === garmentId);
-  const size = garment?.sizes.find(s => s.label === sizeLabel);
+  const length = garment?.lengths.find(l => l.label === lengthLabel);
   const shoe = shoes.find(s => s.id === shoeId);
-  if (!garment || !size || !shoe || typeof benchmarkCm !== 'number') {
-    return res.status(400).json({ error: 'garmentId, sizeLabel, shoeId, benchmarkCm required' });
+  if (!garment || !length || !shoe || typeof benchmarkCm !== 'number') {
+    return res.status(400).json({ error: 'garmentId, lengthLabel, shoeId, benchmarkCm required' });
   }
 
-  const v = verdict({ benchmarkCm, garmentCm: size.outseamCm, heelCm: shoe.heelCm, breakPref });
-  const hemTarget = hemTargetCm({ benchmarkCm, heelCm: shoe.heelCm, breakPref });
+  const v = fitVerdict({ benchmarkCm, garmentCm: length.inseamCm, shoe, stretch: garment.stretch });
+  const hemTarget = hemTargetCm({ benchmarkCm, shoe });
 
   const job = {
     id: randomUUID(),
@@ -50,7 +52,7 @@ app.post('/api/render', (req, res) => {
     done: false,
     error: null,
     result: null,
-    input: { garment, size, shoe, benchmarkCm, breakPref, gender, verdict: v, hemTarget },
+    input: { garment, length, shoe, benchmarkCm, gender, verdict: v, hemTarget },
   };
   jobs.set(job.id, job);
   (MOCK ? runMockJob : runRealJob)(job).catch(err => {
@@ -72,7 +74,7 @@ async function runMockJob(job) {
     job.stage = stage; job.pct = pct;
     await new Promise(r => setTimeout(r, ms));
   };
-  const tooShort = job.input.verdict.verdict === 'too_short';
+  const tooShort = job.input.verdict.tone === 'short';
   await step('shoes_vto', tooShort ? 30 : 10, 1800);
   await step('verdict', tooShort ? 80 : 40, 600);
   if (tooShort) {
@@ -101,7 +103,7 @@ async function runRealJob(job) {
   job.stage = 'shoes_vto'; job.pct = 5;
   const base = await shoesVto(userPhoto, shoeImg, gender);
   job.stage = 'verdict'; job.pct = 40;
-  if (job.input.verdict.verdict === 'too_short') {
+  if (job.input.verdict.tone === 'short') {
     // No clothes renders for an unfixable size — saves 2 API units per run.
     job.result = { baseImage: toCacheUrl(base.imagePath), mock: false };
     job.stage = 'done'; job.pct = 100; job.done = true;
