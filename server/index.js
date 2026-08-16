@@ -34,7 +34,7 @@ app.get('/api/config', (_req, res) => res.json({ mock: MOCK }));
 const jobs = new Map();
 
 app.post('/api/render', (req, res) => {
-  const { garmentId, lengthLabel, shoeId, benchmarkCm, gender = 'female' } = req.body ?? {};
+  const { garmentId, lengthLabel, shoeId, benchmarkCm, gender = 'female', source = 'photo' } = req.body ?? {};
   const garment = catalog.find(g => g.id === garmentId);
   const length = garment?.lengths.find(l => l.label === lengthLabel);
   const shoe = shoes.find(s => s.id === shoeId);
@@ -52,7 +52,7 @@ app.post('/api/render', (req, res) => {
     done: false,
     error: null,
     result: null,
-    input: { garment, length, shoe, benchmarkCm, gender, verdict: v, hemTarget },
+    input: { garment, length, shoe, benchmarkCm, gender, source, verdict: v, hemTarget },
   };
   jobs.set(job.id, job);
   (MOCK ? runMockJob : runRealJob)(job).catch(err => {
@@ -95,8 +95,11 @@ async function runMockJob(job) {
 }
 
 async function runRealJob(job) {
-  const { garment, shoe, gender } = job.input;
-  const userPhoto = path.join(ROOT, 'assets/input/user.jpg');
+  const { garment, shoe, gender, source } = job.input;
+  // YouCam's VTO tasks reject photos without a detectable face (error_no_face),
+  // so both inputs must be full-length shots with the face visible.
+  const userPhoto = path.join(ROOT, source === 'avatar' ? 'assets/input/avatar.jpg' : 'assets/input/user.jpg');
+  if (!existsSync(userPhoto)) throw new Error(`Missing input image: ${path.relative(ROOT, userPhoto)}`);
   const garmentImg = path.join(ROOT, 'web/public', garment.image);
   const shoeImg = path.join(ROOT, 'web/public', shoe.image);
 

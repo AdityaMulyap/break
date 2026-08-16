@@ -39,7 +39,7 @@ export function StoreHeader({ onBack, title }) {
 }
 
 export function Scroll({ children, pad = true }) {
-  return <div style={{ overflowY: "auto", padding: pad ? "var(--space-6) var(--page-margin) var(--space-8)" : 0 }}>{children}</div>;
+  return <div style={{ overflowY: "auto", minHeight: 0, padding: pad ? "var(--space-6) var(--page-margin) var(--space-8)" : 0 }}>{children}</div>;
 }
 
 export function H1({ children, style }) {

@@ -19,3 +19,7 @@ All cropped to 3:4 at 600×800; -d1/-d2 are waist/hem detail crops of the same s
 Mock try-on photos (`assets/input/user*.jpg`, served at `/mock/`):
 - "Woman Legs" (jeans + white sneakers), StockSnap CC0 https://cdn.stocksnap.io/img-thumbs/960w/RPRIQME5CL.jpg
   `user-shipped.jpg` adds an amber pooling-zone overlay; `user-hemmed.jpg` adds an indigo hem line. Replaced by real YouCam renders in live mode.
+
+## Try-on input photos (assets/input/)
+- user.jpg — Pexels photo 38432409 (smiling woman in casual jeans, studio), Pexels license
+- avatar.jpg — Pexels photo 19427383 (young woman standing on park pavement), Pexels license

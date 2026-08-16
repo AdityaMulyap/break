@@ -44,6 +44,7 @@ export default function App() {
   const [bag, setBag] = useState(null);
   const [order, setOrder] = useState(null);
   const [seenPhotoAsk, setSeenPhotoAsk] = useState(false);
+  const [renderSource, setRenderSource] = useState("photo"); // "photo" | "avatar", from the try-on ask screen
   const [setupFit, setSetupFit] = useState(null);
   const [hemPref, setHemPref] = useState(true); // hem-to-length selected, from the sheet's length options
 
@@ -171,14 +172,14 @@ export default function App() {
       )}
 
       {screen === "fitsetup" && (
-        <div style={{ overflowY: "auto", padding: "var(--space-6) var(--page-margin) var(--space-8)" }}>
+        <div style={{ overflowY: "auto", minHeight: 0, padding: "var(--space-6) var(--page-margin) var(--space-8)" }}>
           <FitSetup benchmarks={data.benchmarks} shoes={data.shoes} initialShoe={fit?.shoeId ?? "sneakers"}
             onDone={f => { setSetupFit(f); setScreen("fitconfirm"); }} />
         </div>
       )}
 
       {screen === "fitconfirm" && setupFit && (
-        <div style={{ overflowY: "auto", padding: "var(--space-6) var(--page-margin) var(--space-8)" }}>
+        <div style={{ overflowY: "auto", minHeight: 0, padding: "var(--space-6) var(--page-margin) var(--space-8)" }}>
           <FitConfirm fit={setupFit} onContinue={() => { setFit(setupFit); setScreen("catalog"); }} />
         </div>
       )}
@@ -190,10 +191,10 @@ export default function App() {
           onAdd={() => { setBag({ item, waist, len, garmentCm: length.inseamCm }); setScreen("checkout"); }} />
       )}
 
-      {screen === "ask" && <TryOnAsk onPhoto={() => { setSeenPhotoAsk(true); setScreen("render"); }} onAvatar={() => { setSeenPhotoAsk(true); setScreen("render"); }} />}
+      {screen === "ask" && <TryOnAsk onPhoto={() => { setRenderSource("photo"); setSeenPhotoAsk(true); setScreen("render"); }} onAvatar={() => { setRenderSource("avatar"); setSeenPhotoAsk(true); setScreen("render"); }} />}
 
       {screen === "render" && item && fit && (
-        <TryOnRender item={item} fit={fit} shoe={shoe} shoes={data.shoes}
+        <TryOnRender item={item} fit={fit} shoe={shoe} shoes={data.shoes} source={renderSource}
           onShoe={id => setFit({ ...fit, shoeId: id })}
           lengthLabel={length.label} verdict={verdict} hemPref={hemPref}
           onRetry={() => setScreen("ask")}

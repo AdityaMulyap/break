@@ -45,7 +45,7 @@ const HEEL_HEIGHTS = ["Under 4 cm", "4 to 7 cm", "Over 7 cm"];
 // (shoes VTO -> verdict -> cloth VTO as shipped -> cloth VTO hemmed),
 // then we poll the job. Changing the shoe chip re-runs the chain — the
 // on-camera API moment. In mock mode the server simulates the timeline.
-export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdict, hemPref, onCheckout, onRetry }) {
+export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdict, hemPref, onCheckout, onRetry, source = "photo" }) {
   const [job, setJob] = React.useState({ stage: "shoes_vto", done: false, error: null, result: null });
   const [len, setLen] = React.useState("your");
   const [heel, setHeel] = React.useState(HEEL_HEIGHTS[1]);
@@ -60,7 +60,7 @@ export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdi
         const res = await fetch("/api/render", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ garmentId: item.id, lengthLabel, shoeId: fit.shoeId, benchmarkCm: fit.benchmarkCm }),
+          body: JSON.stringify({ garmentId: item.id, lengthLabel, shoeId: fit.shoeId, benchmarkCm: fit.benchmarkCm, source }),
         });
         if (!res.ok) throw new Error("could not start the render");
         const { jobId } = await res.json();
@@ -78,7 +78,7 @@ export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdi
       }
     })();
     return () => { alive = false; clearTimeout(timer); };
-  }, [item.id, lengthLabel, fit.shoeId, fit.benchmarkCm]);
+  }, [item.id, lengthLabel, fit.shoeId, fit.benchmarkCm, source]);
 
   const loading = !job.done;
   const failed = job.done && (job.error || !job.result);
@@ -102,7 +102,11 @@ export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdi
           ) : failed ? (
             <>
               <PhotoFrame ratio="4 / 5" label="No render" plugin />
-              <ErrorNote title="Could not generate this try-on" action="Try another photo" onAction={onRetry}>Your photo may be too dark or cropped</ErrorNote>
+              <ErrorNote title="Could not generate this try-on" action={source === "avatar" ? "Try a photo instead" : "Try another photo"} onAction={onRetry}>
+                {/no_face/i.test(job.error || "") ?
+                  (source === "avatar" ? "The avatar image needs a full-length view with the face visible" : "We need a full-length photo with your face visible") :
+                  "Your photo may be too dark or cropped"}
+              </ErrorNote>
             </>
           ) : compare ? (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-2)" }}>
