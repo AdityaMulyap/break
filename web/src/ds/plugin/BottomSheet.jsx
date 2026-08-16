@@ -13,7 +13,7 @@ export function BottomSheet({ open = true, title, onClose, children, footer, sty
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
         </div>
-        <div style={{ padding: "var(--space-5) var(--page-margin)", overflowY: "auto" }}>{children}</div>
+        <div style={{ padding: "var(--space-5) var(--page-margin)", overflowY: "auto", minHeight: 0, overscrollBehavior: "contain", WebkitOverflowScrolling: "touch" }}>{children}</div>
         {footer ? <div style={{ padding: "var(--space-4) var(--page-margin) var(--space-6)", borderTop: "var(--hairline)" }}>{footer}</div> : null}
         <style>{"@keyframes breakSheetIn{from{transform:translateY(16px);opacity:.4}to{transform:none;opacity:1}}"}</style>
       </div>
