@@ -87,8 +87,8 @@ async function runMockJob(job) {
   await step('cloth_vto_hemmed', 80, 1600);
   job.result = {
     baseImage: '/mock/user.jpg',
-    shippedImage: '/mock/user.jpg',
-    hemmedImage: '/mock/user.jpg',
+    shippedImage: '/mock/user-shipped.jpg',
+    hemmedImage: '/mock/user-hemmed.jpg',
     mock: true,
   };
   job.stage = 'done'; job.pct = 100; job.done = true;

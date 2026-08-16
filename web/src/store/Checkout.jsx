@@ -10,7 +10,7 @@ const HEM_USD = 12;
 // - Not confident (stretch fabric / no verdict): the garment ships
 //   unhemmed with a prepaid hem credit. Try it first, we hem it after.
 // The irreversible step is only sold once the reversible ones are resolved.
-export function Checkout({ bag, verdict, onPlace }) {
+export function Checkout({ bag, verdict, shoe, onPlace }) {
   const offerHem = verdict?.tone === "long";
   const confident = verdict?.tone === "long" || verdict?.tone === "fits";
   const [demoLow, setDemoLow] = React.useState(false);
@@ -28,7 +28,7 @@ export function Checkout({ bag, verdict, onPlace }) {
           <H1>Your bag</H1>
 
           <div style={{ display: "flex", gap: "var(--space-3)" }}>
-            <PhotoFrame ratio="3 / 4" label="" style={{ width: 72, flex: "0 0 auto" }} />
+            <PhotoFrame ratio="3 / 4" label="" src={bag.item.image} alt={bag.item.name} style={{ width: 72, flex: "0 0 auto" }} />
             <div style={{ display: "grid", gap: "2px", alignContent: "start" }}>
               <span style={{ font: "var(--text-small-role)" }}>{bag.item.name}</span>
               <span style={{ font: "var(--text-tiny-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)" }}>{bag.item.wash} · {bag.waist} × {bag.len}</span>
@@ -39,14 +39,14 @@ export function Checkout({ bag, verdict, onPlace }) {
           <div style={{ display: "grid", gap: "var(--space-3)" }}>
             <span style={{ font: "var(--text-tiny-role)", letterSpacing: "var(--ls-label)", textTransform: "uppercase", color: "var(--text-secondary)" }}>Length</span>
             {low ? (
-              <HemOption selected title="Ships unhemmed with a hem credit" detail="Try it first, we hem it after" price="Included" />
+              <HemOption selected title="Ships unhemmed with a hem credit" detail={`$${HEM_USD} hemming prepaid. Try it first, we hem it after`} price="Included" />
             ) : offerHem ? (
               <>
                 <HemOption selected={!hem} title="Original" detail={`${bag.garmentCm} cm as shipped`} price="Included" onClick={() => setHem(false)} />
-                <HemOption selected={hem} recommended={hem} onClick={() => setHem(true)} title="Hem to your length before shipping" detail={`${Math.round(verdict.targetCm)} cm, + 3 days`} price={`+$${HEM_USD}`} />
+                <HemOption selected={hem} recommended={hem} onClick={() => setHem(true)} title="Hem to your length before shipping" detail={`${Math.round(verdict.targetCm)} cm, sits right in your ${shoe?.name.toLowerCase() ?? "shoes"}. + 3 days`} price={`+$${HEM_USD}`} />
               </>
             ) : (
-              <HemOption selected title="Original" detail="Already your length in these shoes" price="Included" />
+              <HemOption selected title="Original" detail={`Already your length in your ${shoe?.name.toLowerCase() ?? "shoes"}`} price="Included" />
             )}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <BreakMark fn="HEMMING" />
@@ -59,7 +59,7 @@ export function Checkout({ bag, verdict, onPlace }) {
           <div style={{ display: "grid", gap: "var(--space-3)", borderTop: "var(--hairline)", paddingTop: "var(--space-4)" }}>
             <SummaryRow label="Subtotal" value={"$" + base} />
             {hemOn ? <SummaryRow label="Hem to your length" note="+ 3 days" value={`+$${HEM_USD}`} /> : null}
-            {low ? <SummaryRow label="Hem credit" note="redeem after it arrives" value="Included" /> : null}
+            {low ? <SummaryRow label="Hem credit" note="redeem after it arrives" value="Prepaid" /> : null}
             <SummaryRow label="Shipping" value="Free" />
             <SummaryRow label="Total" value={"$" + total} total />
           </div>

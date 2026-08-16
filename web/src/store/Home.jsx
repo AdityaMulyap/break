@@ -19,7 +19,7 @@ export function Home({ catalog, onShop, onOpen }) {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-6) var(--space-3)" }}>
             {arrivals.map(i => (
-              <ProductCard key={i.id} name={i.name} wash={i.wash} price={"$" + i.priceUsd} onClick={() => onOpen(i)} />
+              <ProductCard key={i.id} name={i.name} wash={i.wash} price={"$" + i.priceUsd} src={i.image} onClick={() => onOpen(i)} />
             ))}
           </div>
         </div>

@@ -11,6 +11,14 @@
   --radius-store: 16px;
   --radius-plugin: 22px;
   --fs-h1: 25px;
+
+  /* AA contrast: #7A7A7A measured 3.9:1 on the section gray */
+  --ink-45: #6A6A6A;
+}
+
+button {
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 * { box-sizing: border-box; }

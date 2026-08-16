@@ -44,14 +44,14 @@ export function BreakSheet({ open, item, lengthLabel, fit, shoes, benchmarks, on
             <span style={{ font: "var(--text-small-role)", color: "var(--text-secondary)" }}>{shortName} · {item.waists.includes("28") ? "28" : item.waists[0]} × {length.label}</span>
             <div style={{ display: "inline-flex", border: "var(--hairline)", borderRadius: "var(--radius-plugin)", overflow: "hidden" }}>
               {["cm", "in"].map(u => (
-                <button key={u} type="button" onClick={() => setUnit(u)} style={{ font: "var(--text-tiny-role)", padding: "6px 12px", cursor: "pointer", border: "none", background: unit === u ? "var(--ink)" : "var(--paper)", color: unit === u ? "var(--paper)" : "var(--text-secondary)" }}>{u}</button>
+                <button key={u} type="button" onClick={() => setUnit(u)} aria-pressed={unit === u} style={{ font: "var(--text-small-role)", padding: "12px 16px", cursor: "pointer", border: "none", background: unit === u ? "var(--ink)" : "var(--paper)", color: unit === u ? "var(--paper)" : "var(--text-secondary)" }}>{u}</button>
               ))}
             </div>
           </div>
 
           {busy
             ? <Shimmer height="92px" radius="var(--radius-plugin)" />
-            : <VerdictCard headline={v.headline} subline={v.subline} />}
+            : <VerdictCard headline={v.headline} subline={v.subline} tone={v.tone} />}
 
           <MeasureReceipt heading="Length" unit={unit}
             rows={[{ label: "This garment", value: num(length.inseamCm) }, { label: "Your length", value: num(v.targetCm) }]}

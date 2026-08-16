@@ -11,7 +11,7 @@ export function ProductCard({ name, wash, price, badge, src, onClick, style, ...
         {badge ? <div style={{ position: "absolute", left: "var(--space-2)", bottom: "var(--space-2)" }}><FitBadge>{badge}</FitBadge></div> : null}
       </div>
       <div style={{ display: "grid", gap: "2px" }}>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)" }}>{name}</span>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: "var(--fw-semibold)", color: "var(--text-primary)", minHeight: "2.8em", textWrap: "pretty" }}>{name}</span>
         {wash ? <span style={{ fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)" }}>{wash}</span> : null}
         <span style={{ fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: "var(--fw-medium)", color: "var(--text-primary)" }}>{price}</span>
       </div>

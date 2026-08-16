@@ -12,6 +12,7 @@ export function TryOnAsk({ onPhoto, onAvatar }) {
           <Sub>One photo, used once for this render.</Sub>
         </div>
         <PhotoFrame ratio="4 / 5" label="Your photo goes here" plugin />
+        <p style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)", margin: 0, textWrap: "pretty" }}>Full length, ankles and shoes in frame. Plain light works best.</p>
         <div style={{ display: "grid", gap: "var(--space-3)" }}>
           <Button full plugin onClick={onPhoto}>Upload a photo</Button>
           <Button variant="secondary" full plugin onClick={onAvatar}>Use an avatar instead</Button>

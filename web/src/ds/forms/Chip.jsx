@@ -8,7 +8,7 @@ export function Chip({ label, selected = false, recommended = false, filter = fa
       color: selected ? (filter ? "var(--accent)" : "var(--paper)") : "var(--text-primary)",
       background: selected && !filter ? "var(--accent)" : "var(--paper)",
       border: selected ? "1px solid var(--accent)" : "var(--hairline)",
-      borderRadius: "var(--radius-plugin)", padding: "0 var(--space-3)", height: "36px",
+      borderRadius: "var(--radius-plugin)", padding: "0 var(--space-4)", height: "44px",
       display: "inline-flex", alignItems: "center", gap: "var(--space-2)", cursor: "pointer",
       transition: "background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard)", ...style
     }} {...rest}>

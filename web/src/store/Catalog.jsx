@@ -63,7 +63,7 @@ export function Catalog({ catalog, fit, shoe, onOpen, onSetFit, onEditFit }) {
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-6) var(--space-3)" }}>
             {items.map(i => (
-              <ProductCard key={i.id} name={i.name} wash={i.wash} price={"$" + i.priceUsd}
+              <ProductCard key={i.id} name={i.name} wash={i.wash} price={"$" + i.priceUsd} src={i.image}
                 badge={sorted && i.best?.v.badge ? i.best.v.badge : undefined}
                 onClick={() => onOpen(i)} />
             ))}

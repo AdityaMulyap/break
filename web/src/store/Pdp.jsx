@@ -9,7 +9,7 @@ export function Pdp({ item, verdict, answered, onOpenVerdict, onAdd, waist, onWa
   return (
     <>
       <Scroll pad={false}>
-        <PhotoFrame ratio="4 / 5" label={item.name.toUpperCase() + " · " + item.wash.toUpperCase()} style={{ borderRadius: 0 }} />
+        <PhotoFrame ratio="4 / 5" label={item.name.toUpperCase() + " · " + item.wash.toUpperCase()} src={item.image} alt={item.name} style={{ borderRadius: 0 }} />
         <div style={{ padding: "var(--space-5) var(--page-margin) var(--space-8)", display: "grid", gap: "var(--space-5)" }}>
           <div style={{ display: "grid", gap: "var(--space-2)" }}>
             <H1>{item.name}</H1>

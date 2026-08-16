@@ -55,7 +55,8 @@ export function FitSetup({ benchmarks, shoes, initialShoe = "sneakers", onDone, 
           <Shimmer height="56px" /><Shimmer height="56px" />
         </div>
       ) : noMatch ? (
-        <EmptyState title="No match for that one" body="Some brands are not in our library yet." />
+        <EmptyState title="No match for that one" body="Some brands are not in our library yet."
+          action="Show the brands we know" onAction={() => { setQ(""); setNoMatch(false); }} />
       ) : !brand ? (
         <div style={{ display: "grid" }}>
           {brands.map(b => <BrandRow key={b.name} brand={b.name} onClick={() => pickBrand(b)} />)}
@@ -69,7 +70,9 @@ export function FitSetup({ benchmarks, shoes, initialShoe = "sneakers", onDone, 
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-2)" }}>
             {brand.styles.map(s => (
-              <StyleCard key={s.name} name={s.name} fit={s.fit} shape={s.shape} selected={style?.name === s.name} onClick={() => { setStyle(s); setSize(null); }} />
+              <StyleCard key={s.name} name={s.name}
+                fit={s.name.toLowerCase().includes(s.fit.toLowerCase()) ? undefined : s.fit}
+                shape={s.shape} selected={style?.name === s.name} onClick={() => { setStyle(s); setSize(null); }} />
             ))}
           </div>
 
@@ -112,6 +115,7 @@ export function FitConfirm({ fit, itemName, onContinue, compact = false }) {
         <div style={{ display: "grid", gap: "2px" }}>
           <span style={{ font: "var(--text-small-role)", color: "var(--text-primary)" }}>{fit.brand} {fit.styleName}, {fit.sizeLabel}</span>
           <span style={{ font: "var(--text-tiny-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)" }}>Your length: {Math.round(fit.benchmarkCm)} cm</span>
+          <span style={{ font: "var(--text-tiny-role)", fontWeight: "var(--fw-regular)", color: "var(--text-muted)" }}>From that pair's published measurements</span>
         </div>
       </div>
       <Button full plugin={compact} onClick={onContinue}>{itemName ? `Check ${itemName}` : "Start shopping"}</Button>

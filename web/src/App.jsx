@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Shell, StoreHeader } from "./store/Frame.jsx";
 import { Home } from "./store/Home.jsx";
 import { Catalog } from "./store/Catalog.jsx";
@@ -11,15 +11,31 @@ import { BreakMark } from "./ds";
 import { fitVerdict } from "../../lib/fit.js";
 
 const FIT_KEY = "break.fit";
+const SESSION_KEY = "rivet.session";
 
-const readFit = () => {
-  try { return JSON.parse(localStorage.getItem(FIT_KEY)) ?? null; } catch { return null; }
+const readJson = (store, key) => {
+  try { return JSON.parse(store.getItem(key)) ?? null; } catch { return null; }
 };
+
+// Hash routes so browser/hardware back walks the flow instead of exiting,
+// and a refresh restores where you were (fit lives in localStorage, the
+// in-progress session in sessionStorage).
+const HASHES = {
+  home: "#/", catalog: "#/catalog", pdp: "#/p/", fitsetup: "#/fit", fitconfirm: "#/fit/confirm",
+  ask: "#/tryon", render: "#/render", checkout: "#/bag", done: "#/done",
+};
+
+function parseHash(hash) {
+  if (!hash || hash === "#/" || hash === "#") return { screen: "home" };
+  if (hash.startsWith("#/p/")) return { screen: "pdp", itemId: hash.slice(4) };
+  const entry = Object.entries(HASHES).find(([, h]) => h === hash);
+  return { screen: entry ? entry[0] : "home", itemId: null };
+}
 
 export default function App() {
   const [data, setData] = useState(null); // { catalog, shoes, benchmarks }
   const [screen, setScreen] = useState("home");
-  const [fit, setFitState] = useState(readFit);
+  const [fit, setFitState] = useState(() => readJson(localStorage, FIT_KEY));
   const [item, setItem] = useState(null);
   const [waist, setWaist] = useState("28");
   const [len, setLen] = useState(null);
@@ -28,7 +44,11 @@ export default function App() {
   const [bag, setBag] = useState(null);
   const [order, setOrder] = useState(null);
   const [seenPhotoAsk, setSeenPhotoAsk] = useState(false);
-  const [setupFit, setSetupFit] = useState(null); // pending fit on the full-screen setup path
+  const [setupFit, setSetupFit] = useState(null);
+
+  // Everything the popstate listener needs, without re-binding.
+  const live = useRef({});
+  live.current = { data, fit, item, bag, order };
 
   useEffect(() => {
     Promise.all([
@@ -37,6 +57,76 @@ export default function App() {
       fetch("/api/benchmarks").then(r => r.json()),
     ]).then(([catalog, shoes, benchmarks]) => setData({ catalog, shoes, benchmarks }));
   }, []);
+
+  // Restore session once data arrives, honoring the URL over the session.
+  useEffect(() => {
+    if (!data) return;
+    const saved = readJson(sessionStorage, SESSION_KEY) ?? {};
+    const wanted = location.hash ? parseHash(location.hash) : { screen: saved.screen, itemId: saved.itemId };
+    const savedItem = data.catalog.find(g => g.id === (wanted.itemId ?? saved.itemId)) ?? null;
+    if (savedItem) {
+      setItem(savedItem);
+      setLen(saved.len && savedItem.lengths.some(l => l.label === saved.len) ? saved.len : savedItem.lengths[0].label);
+      setWaist(saved.waist ?? (savedItem.waists.includes("28") ? "28" : savedItem.waists[0]));
+      setAnswered(Boolean(saved.answered));
+    }
+    if (saved.bag) {
+      const bagItem = data.catalog.find(g => g.id === saved.bag.itemId);
+      if (bagItem) setBag({ ...saved.bag, item: bagItem });
+    }
+    if (saved.order) setOrder(saved.order);
+    if (saved.seenPhotoAsk) setSeenPhotoAsk(true);
+    setScreen(guard(wanted.screen ?? "home", {
+      item: savedItem,
+      fit: readJson(localStorage, FIT_KEY),
+      bag: saved.bag ? data.catalog.find(g => g.id === saved.bag.itemId) && saved.bag : null,
+      order: saved.order,
+    }));
+  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Screens with prerequisites fall back to somewhere sensible.
+  function guard(target, { item, fit, bag, order }) {
+    if ((target === "pdp" || target === "ask") && !item) return "catalog";
+    if (target === "render" && !(item && fit)) return item ? "pdp" : "catalog";
+    if (target === "checkout" && !bag) return item ? "pdp" : "catalog";
+    if (target === "done" && !order) return "home";
+    if (target === "fitconfirm") return "fitsetup";
+    return target ?? "home";
+  }
+
+  // Keep the URL in step with the screen.
+  useEffect(() => {
+    if (!data) return;
+    const h = screen === "pdp" ? HASHES.pdp + (item?.id ?? "") : HASHES[screen];
+    if (location.hash !== h) history.pushState(null, "", h);
+  }, [screen, item, data]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Browser/hardware back.
+  useEffect(() => {
+    const onPop = () => {
+      const { data, fit, bag, order } = live.current;
+      if (!data) return;
+      const wanted = parseHash(location.hash);
+      if (wanted.itemId) {
+        const g = data.catalog.find(x => x.id === wanted.itemId);
+        if (g) { setItem(g); setLen(l => g.lengths.some(x => x.label === l) ? l : g.lengths[0].label); }
+      }
+      setSheet(false);
+      setScreen(guard(wanted.screen, { item: wanted.itemId ? data.catalog.find(x => x.id === wanted.itemId) : live.current.item, fit, bag, order }));
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  // Session persistence: survive refresh and app switches.
+  useEffect(() => {
+    if (!data) return;
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({
+      screen, itemId: item?.id ?? null, waist, len, answered, seenPhotoAsk,
+      bag: bag ? { itemId: bag.item.id, waist: bag.waist, len: bag.len, garmentCm: bag.garmentCm } : null,
+      order,
+    }));
+  }, [data, screen, item, waist, len, answered, seenPhotoAsk, bag, order]);
 
   const setFit = f => {
     setFitState(f);
@@ -70,7 +160,6 @@ export default function App() {
     <Shell>
       <StoreHeader
         onBack={back[screen] ? () => setScreen(back[screen]) : undefined}
-        title={screen === "fitsetup" || screen === "fitconfirm" ? <BreakMark fn="MY FIT" /> : undefined}
       />
 
       {screen === "home" && <Home catalog={data.catalog} onShop={() => setScreen("catalog")} onOpen={openItem} />}
@@ -108,7 +197,7 @@ export default function App() {
           onCheckout={() => { setBag({ item, waist, len: length.label, garmentCm: length.inseamCm }); setScreen("checkout"); }} />
       )}
 
-      {screen === "checkout" && bag && <Checkout bag={bag} verdict={verdict} onPlace={o => { setOrder(o); setScreen("done"); }} />}
+      {screen === "checkout" && bag && <Checkout bag={bag} verdict={verdict} shoe={shoe} onPlace={o => { setOrder(o); setScreen("done"); }} />}
 
       {screen === "done" && <Confirmed order={order} itemShortName={shortName} onRestart={() => setScreen("home")} />}
 
