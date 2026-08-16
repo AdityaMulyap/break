@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Shell, StoreHeader } from "./store/Frame.jsx";
+import { Shell, StoreHeader, TabBar } from "./store/Frame.jsx";
 import { Home } from "./store/Home.jsx";
 import { Catalog } from "./store/Catalog.jsx";
 import { Pdp } from "./store/Pdp.jsx";
@@ -45,6 +45,7 @@ export default function App() {
   const [order, setOrder] = useState(null);
   const [seenPhotoAsk, setSeenPhotoAsk] = useState(false);
   const [setupFit, setSetupFit] = useState(null);
+  const [hemPref, setHemPref] = useState(true); // hem-to-length selected, from the sheet's length options
 
   // Everything the popstate listener needs, without re-binding.
   const live = useRef({});
@@ -192,19 +193,27 @@ export default function App() {
       {screen === "ask" && <TryOnAsk onPhoto={() => { setSeenPhotoAsk(true); setScreen("render"); }} onAvatar={() => { setSeenPhotoAsk(true); setScreen("render"); }} />}
 
       {screen === "render" && item && fit && (
-        <TryOnRender item={item} fit={fit} shoe={shoe} lengthLabel={length.label}
+        <TryOnRender item={item} fit={fit} shoe={shoe} shoes={data.shoes}
+          onShoe={id => setFit({ ...fit, shoeId: id })}
+          lengthLabel={length.label} verdict={verdict} hemPref={hemPref}
           onRetry={() => setScreen("ask")}
           onCheckout={() => { setBag({ item, waist, len: length.label, garmentCm: length.inseamCm }); setScreen("checkout"); }} />
       )}
 
-      {screen === "checkout" && bag && <Checkout bag={bag} verdict={verdict} shoe={shoe} onPlace={o => { setOrder(o); setScreen("done"); }} />}
+      {screen === "checkout" && bag && <Checkout bag={bag} verdict={verdict} shoe={shoe} hemPref={hemPref} onHemPref={setHemPref} onPlace={o => { setOrder(o); setScreen("done"); }} />}
 
       {screen === "done" && <Confirmed order={order} itemShortName={shortName} onRestart={() => setScreen("home")} />}
+
+      {(screen === "home" || screen === "catalog") && (
+        <TabBar active={screen === "home" ? "Home" : "Shop"}
+          onGo={target => { if (target === "checkout" && !bag) return; setScreen(target); }} />
+      )}
 
       {screen === "pdp" && item && (
         <BreakSheet open={sheet} item={item} lengthLabel={length?.label} fit={fit}
           shoes={data.shoes} benchmarks={data.benchmarks}
           onFit={f => { setFit(f); setAnswered(true); }}
+          hemPref={hemPref} onHemPref={setHemPref}
           onClose={() => setSheet(false)}
           onSeeIt={() => { setSheet(false); setScreen(seenPhotoAsk ? "render" : "ask"); }} />
       )}

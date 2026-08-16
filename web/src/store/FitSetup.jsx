@@ -1,5 +1,7 @@
 import React from "react";
-import { SearchField, Button, EmptyState, Shimmer, BrandRow, StyleCard, SizeBox, ChipRow, BreakMark, PantsDiagram } from "../ds";
+import { SearchField, Button, EmptyState, Shimmer, BrandRow, StyleRow, SizeBox, ChipRow, BreakMark, PantsDiagram } from "../ds";
+
+const HEIGHTS = ['Under 5\'3"', '5\'3" to 5\'9"', '5\'9" to 6\'1"', 'Over 6\'1"'];
 import { H1, Sub } from "./Frame.jsx";
 
 // First-run Break setup: pick the benchmark pair, then the usual shoes.
@@ -11,7 +13,9 @@ export function FitSetup({ benchmarks, shoes, initialShoe = "sneakers", onDone, 
   const [brand, setBrand] = React.useState(null);
   const [style, setStyle] = React.useState(null);
   const [size, setSize] = React.useState(null);
+  const [height, setHeight] = React.useState(HEIGHTS[1]);
   const [shoeId, setShoeId] = React.useState(initialShoe);
+  const [styleQ, setStyleQ] = React.useState("");
   const [noMatch, setNoMatch] = React.useState(false);
   const timer = React.useRef();
 
@@ -58,7 +62,8 @@ export function FitSetup({ benchmarks, shoes, initialShoe = "sneakers", onDone, 
         <EmptyState title="No match for that one" body="Some brands are not in our library yet."
           action="Show the brands we know" onAction={() => { setQ(""); setNoMatch(false); }} />
       ) : !brand ? (
-        <div style={{ display: "grid" }}>
+        <div style={{ display: "grid", gap: "var(--space-1)" }}>
+          <span style={{ font: "var(--text-tiny-role)", letterSpacing: "var(--ls-label)", textTransform: "uppercase", color: "var(--text-secondary)" }}>Popular</span>
           {brands.map(b => <BrandRow key={b.name} brand={b.name} onClick={() => pickBrand(b)} />)}
         </div>
       ) : (
@@ -68,12 +73,15 @@ export function FitSetup({ benchmarks, shoes, initialShoe = "sneakers", onDone, 
             <button type="button" onClick={() => { setBrand(null); setStyle(null); setSize(null); setQ(""); }} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: "var(--fw-medium)", color: "var(--text-link)", textDecoration: "underline", textUnderlineOffset: "3px" }}>Change</button>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-2)" }}>
-            {brand.styles.map(s => (
-              <StyleCard key={s.name} name={s.name}
-                fit={s.name.toLowerCase().includes(s.fit.toLowerCase()) ? undefined : s.fit}
-                shape={s.shape} selected={style?.name === s.name} onClick={() => { setStyle(s); setSize(null); }} />
-            ))}
+          <div style={{ display: "grid", gap: "var(--space-2)" }}>
+            <SearchField value={styleQ} onChange={e => setStyleQ(e.target.value)} placeholder={`Search ${brand.name} styles`} />
+            <div style={{ display: "grid" }}>
+              {brand.styles.filter(s => s.name.toLowerCase().includes(styleQ.toLowerCase().trim())).map(s => (
+                <StyleRow key={s.name} name={s.name}
+                  fit={s.name.toLowerCase().includes(s.fit.toLowerCase()) ? undefined : s.fit}
+                  shape={s.shape} selected={style?.name === s.name} onClick={() => { setStyle(s); setSize(null); }} />
+              ))}
+            </div>
           </div>
 
           {style ? (
@@ -85,6 +93,10 @@ export function FitSetup({ benchmarks, shoes, initialShoe = "sneakers", onDone, 
             </div>
           ) : null}
 
+          {style && size ? (
+            <ChipRow label="Your height" options={HEIGHTS} value={height} onChange={setHeight} />
+          ) : null}
+
           {ready ? (
             <ChipRow label="Usually worn with" help="Shoe height changes the right hem, so we ask once." options={shoes.map(s => ({ value: s.id, label: s.name }))} value={shoeId} onChange={setShoeId} />
           ) : null}
@@ -94,6 +106,7 @@ export function FitSetup({ benchmarks, shoes, initialShoe = "sneakers", onDone, 
             styleName: style.name,
             sizeLabel: size,
             benchmarkCm: style.sizes[size],
+            height,
             shoeId,
           })}>That's my pair</Button>
         </div>

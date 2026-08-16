@@ -10,11 +10,27 @@ export function Pdp({ item, verdict, answered, onOpenVerdict, onAdd, waist, onWa
     <>
       <Scroll pad={false}>
         <PhotoFrame ratio="4 / 5" label={item.name.toUpperCase() + " · " + item.wash.toUpperCase()} src={item.image} alt={item.name} style={{ borderRadius: 0 }} />
+        <div style={{ display: "flex", gap: "var(--space-2)", padding: "var(--space-2) var(--page-margin) 0" }}>
+          {[item.image, ...item.washes.map(w => w.color)].slice(0, 5).map((t, i) => (
+            <span key={i} style={{ width: 52, height: 52, borderRadius: 10, border: i === 0 ? "1px solid var(--border-selected)" : "var(--hairline)", overflow: "hidden", flex: "0 0 auto", background: t.startsWith("#") ? t : undefined }}>
+              {t.startsWith("/") ? <img src={t} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : null}
+            </span>
+          ))}
+        </div>
         <div style={{ padding: "var(--space-5) var(--page-margin) var(--space-8)", display: "grid", gap: "var(--space-5)" }}>
-          <div style={{ display: "grid", gap: "var(--space-2)" }}>
+          <div style={{ display: "grid", gap: "var(--space-2)", justifyItems: "start" }}>
+            {item.bestseller || item.rating ? (
+              <span style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
+                {item.bestseller ? <span style={{ font: "var(--text-tiny-role)", letterSpacing: "var(--ls-label)", textTransform: "uppercase", border: "var(--hairline)", borderRadius: 6, padding: "3px 8px", color: "var(--text-secondary)" }}>Bestseller</span> : null}
+                {item.rating ? <span style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)" }}>{"★".repeat(5)} {item.rating.stars} ({item.rating.count})</span> : null}
+              </span>
+            ) : null}
             <H1>{item.name}</H1>
             <span style={{ font: "var(--text-body-role)", color: "var(--text-secondary)" }}>{item.wash}</span>
-            <span style={{ font: "var(--text-body-role)", color: "var(--text-primary)" }}>${item.priceUsd}</span>
+            <span style={{ font: "var(--text-body-role)", color: "var(--text-primary)" }}>
+              ${item.priceUsd}
+              {item.compareAtUsd ? <span style={{ marginLeft: 8, color: "var(--text-muted)", textDecoration: "line-through" }}>${item.compareAtUsd}</span> : null}
+            </span>
             <ModelStats>Model is 5'9", wearing 28 × {item.lengths[0].label}</ModelStats>
           </div>
 
@@ -36,8 +52,14 @@ export function Pdp({ item, verdict, answered, onOpenVerdict, onAdd, waist, onWa
           <PluginRow answered={answered ? verdict?.headline : undefined} tone={verdict?.tone === "unsure" ? "neutral" : verdict?.tone === "short" ? "long" : verdict?.tone} onClick={onOpenVerdict} />
 
           <div style={{ display: "grid", gap: "var(--space-3)", borderTop: "var(--hairline)", paddingTop: "var(--space-4)" }}>
-            <span style={{ font: "var(--text-tiny-role)", letterSpacing: "var(--ls-label)", textTransform: "uppercase", color: "var(--text-secondary)" }}>Details</span>
-            <p style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)", margin: 0, textWrap: "pretty" }}>{item.details}</p>
+            <span style={{ font: "var(--text-tiny-role)", letterSpacing: "var(--ls-label)", textTransform: "uppercase", color: "var(--text-secondary)" }}>Product details</span>
+            {item.bullets?.length ? (
+              <ul style={{ margin: 0, paddingLeft: "1.1em", display: "grid", gap: "var(--space-1)" }}>
+                {item.bullets.map(b => <li key={b} style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)", textWrap: "pretty" }}>{b}</li>)}
+              </ul>
+            ) : (
+              <p style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)", margin: 0, textWrap: "pretty" }}>{item.details}</p>
+            )}
           </div>
         </div>
       </Scroll>

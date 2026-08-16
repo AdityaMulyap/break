@@ -2,7 +2,7 @@ import React from "react";
 
 /** Break's single answer — the hero of the whole product. Tinted by verdict tone. */
 const TONES = {
-  long: { bg: "var(--state-warn-bg)", fg: "var(--state-warn-fg)" },
+  long: { bg: "var(--accent-soft)", fg: "var(--ink)" },
   short: { bg: "var(--state-warn-bg)", fg: "var(--state-warn-fg)" },
   fits: { bg: "var(--state-confirm-bg)", fg: "var(--state-confirm-fg)" },
   unsure: { bg: "var(--state-neutral-bg)", fg: "var(--state-neutral-fg)" },

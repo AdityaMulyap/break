@@ -4,19 +4,54 @@
     "name": "The Mara Wide-Leg Jean in Rigid Denim",
     "wash": "Harbor Wash",
     "washes": [
-      { "name": "Harbor Wash", "color": "#2C3E56" },
-      { "name": "Faded Cove", "color": "#6F86A6" },
-      { "name": "Raw Indigo", "color": "#20242B" }
+      {
+        "name": "Harbor Wash",
+        "color": "#2C3E56"
+      },
+      {
+        "name": "Faded Cove",
+        "color": "#6F86A6"
+      },
+      {
+        "name": "Raw Indigo",
+        "color": "#20242B"
+      }
     ],
-    "priceUsd": 148,
+    "priceUsd": 118,
     "stretch": "No Stretch",
     "details": "13 oz rigid denim, woven in Japan. Button fly, five pockets. Machine wash cold, hang to dry.",
     "image": "/img/catalog/g1.jpg",
-    "waists": ["26", "28", "30", "32", "34"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32",
+      "34"
+    ],
     "lengths": [
-      { "label": "30", "inseamCm": 71 },
-      { "label": "32", "inseamCm": 76 },
-      { "label": "34", "inseamCm": 81 }
+      {
+        "label": "30",
+        "inseamCm": 76
+      },
+      {
+        "label": "32",
+        "inseamCm": 81
+      },
+      {
+        "label": "34",
+        "inseamCm": 86
+      }
+    ],
+    "compareAtUsd": 148,
+    "bestseller": true,
+    "rating": {
+      "stars": 4.6,
+      "count": 218
+    },
+    "bullets": [
+      "A high-rise wide leg cut from rigid denim that holds its shape and softens with wear",
+      "13 oz rigid denim, woven in Japan",
+      "100% cotton, no stretch"
     ]
   },
   {
@@ -24,18 +59,39 @@
     "name": "The Ida Straight Jean in Rigid Denim",
     "wash": "Stone Rinse",
     "washes": [
-      { "name": "Stone Rinse", "color": "#7D8CA3" },
-      { "name": "Raw Indigo", "color": "#20242B" }
+      {
+        "name": "Stone Rinse",
+        "color": "#7D8CA3"
+      },
+      {
+        "name": "Raw Indigo",
+        "color": "#20242B"
+      }
     ],
     "priceUsd": 128,
     "stretch": "No Stretch",
     "details": "12 oz rigid denim with a clean straight leg. Zip fly, five pockets.",
     "image": "/img/catalog/g2.jpg",
-    "waists": ["26", "28", "30", "32", "34"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32",
+      "34"
+    ],
     "lengths": [
-      { "label": "28", "inseamCm": 66 },
-      { "label": "30", "inseamCm": 71 },
-      { "label": "32", "inseamCm": 76 }
+      {
+        "label": "28",
+        "inseamCm": 71
+      },
+      {
+        "label": "30",
+        "inseamCm": 76
+      },
+      {
+        "label": "32",
+        "inseamCm": 81
+      }
     ]
   },
   {
@@ -43,18 +99,38 @@
     "name": "The Ren Slim Taper Jean in Stretch Denim",
     "wash": "Ember Wash",
     "washes": [
-      { "name": "Ember Wash", "color": "#4A4E5C" },
-      { "name": "Stone Rinse", "color": "#7D8CA3" }
+      {
+        "name": "Ember Wash",
+        "color": "#4A4E5C"
+      },
+      {
+        "name": "Stone Rinse",
+        "color": "#7D8CA3"
+      }
     ],
     "priceUsd": 118,
     "stretch": "Some Stretch",
     "details": "11 oz stretch denim, tapered below the knee. Sits close without pinching.",
     "image": "/img/catalog/g3.jpg",
-    "waists": ["26", "28", "30", "32"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32"
+    ],
     "lengths": [
-      { "label": "28", "inseamCm": 66 },
-      { "label": "30", "inseamCm": 71 },
-      { "label": "32", "inseamCm": 76 }
+      {
+        "label": "28",
+        "inseamCm": 71
+      },
+      {
+        "label": "30",
+        "inseamCm": 76
+      },
+      {
+        "label": "32",
+        "inseamCm": 81
+      }
     ]
   },
   {
@@ -62,17 +138,34 @@
     "name": "The Noa Barrel Jean in Rigid Denim",
     "wash": "Alder Wash",
     "washes": [
-      { "name": "Alder Wash", "color": "#5C6B7A" },
-      { "name": "Harbor Wash", "color": "#2C3E56" }
+      {
+        "name": "Alder Wash",
+        "color": "#5C6B7A"
+      },
+      {
+        "name": "Harbor Wash",
+        "color": "#2C3E56"
+      }
     ],
     "priceUsd": 158,
     "stretch": "No Stretch",
     "details": "13.5 oz rigid denim, curved leg, cropped stance. High rise.",
     "image": "/img/catalog/g4.jpg",
-    "waists": ["26", "28", "30", "32"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32"
+    ],
     "lengths": [
-      { "label": "28", "inseamCm": 65 },
-      { "label": "30", "inseamCm": 70 }
+      {
+        "label": "28",
+        "inseamCm": 70
+      },
+      {
+        "label": "30",
+        "inseamCm": 75
+      }
     ]
   },
   {
@@ -80,17 +173,35 @@
     "name": "The Sena Bootcut Jean in Stretch Denim",
     "wash": "Raw Indigo",
     "washes": [
-      { "name": "Raw Indigo", "color": "#20242B" },
-      { "name": "Ember Wash", "color": "#4A4E5C" }
+      {
+        "name": "Raw Indigo",
+        "color": "#20242B"
+      },
+      {
+        "name": "Ember Wash",
+        "color": "#4A4E5C"
+      }
     ],
     "priceUsd": 138,
     "stretch": "Some Stretch",
     "details": "12 oz stretch denim, subtle flare from the knee. Made for heels.",
     "image": "/img/catalog/g5.jpg",
-    "waists": ["26", "28", "30", "32", "34"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32",
+      "34"
+    ],
     "lengths": [
-      { "label": "32", "inseamCm": 78 },
-      { "label": "34", "inseamCm": 83 }
+      {
+        "label": "32",
+        "inseamCm": 83
+      },
+      {
+        "label": "34",
+        "inseamCm": 88
+      }
     ]
   },
   {
@@ -98,17 +209,34 @@
     "name": "The Alma Low Loose Jean in Rigid Denim",
     "wash": "Faded Cove",
     "washes": [
-      { "name": "Faded Cove", "color": "#6F86A6" },
-      { "name": "Stone Rinse", "color": "#7D8CA3" }
+      {
+        "name": "Faded Cove",
+        "color": "#6F86A6"
+      },
+      {
+        "name": "Stone Rinse",
+        "color": "#7D8CA3"
+      }
     ],
     "priceUsd": 98,
     "stretch": "No Stretch",
     "details": "12 oz rigid denim, low rise, loose through the leg. Cropped by design.",
     "image": "/img/catalog/g6.jpg",
-    "waists": ["26", "28", "30", "32"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32"
+    ],
     "lengths": [
-      { "label": "26", "inseamCm": 61 },
-      { "label": "28", "inseamCm": 66 }
+      {
+        "label": "26",
+        "inseamCm": 66
+      },
+      {
+        "label": "28",
+        "inseamCm": 71
+      }
     ]
   },
   {
@@ -116,17 +244,35 @@
     "name": "The Kit Relaxed Taper Jean in Soft Rigid Denim",
     "wash": "Alder Wash",
     "washes": [
-      { "name": "Alder Wash", "color": "#5C6B7A" },
-      { "name": "Faded Cove", "color": "#6F86A6" }
+      {
+        "name": "Alder Wash",
+        "color": "#5C6B7A"
+      },
+      {
+        "name": "Faded Cove",
+        "color": "#6F86A6"
+      }
     ],
     "priceUsd": 128,
     "stretch": "Super Stretch",
     "details": "10 oz soft denim with real give. Relaxed seat, tapered hem.",
     "image": "/img/catalog/g7.jpg",
-    "waists": ["26", "28", "30", "32", "34"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32",
+      "34"
+    ],
     "lengths": [
-      { "label": "30", "inseamCm": 71 },
-      { "label": "32", "inseamCm": 76 }
+      {
+        "label": "30",
+        "inseamCm": 76
+      },
+      {
+        "label": "32",
+        "inseamCm": 81
+      }
     ]
   },
   {
@@ -134,17 +280,34 @@
     "name": "The Vera Column Jean in Rigid Denim",
     "wash": "Raw Indigo",
     "washes": [
-      { "name": "Raw Indigo", "color": "#20242B" },
-      { "name": "Harbor Wash", "color": "#2C3E56" }
+      {
+        "name": "Raw Indigo",
+        "color": "#20242B"
+      },
+      {
+        "name": "Harbor Wash",
+        "color": "#2C3E56"
+      }
     ],
     "priceUsd": 168,
     "stretch": "No Stretch",
     "details": "14 oz rigid denim, one straight line from hip to hem.",
     "image": "/img/catalog/g8.jpg",
-    "waists": ["26", "28", "30", "32"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32"
+    ],
     "lengths": [
-      { "label": "32", "inseamCm": 79 },
-      { "label": "34", "inseamCm": 84 }
+      {
+        "label": "32",
+        "inseamCm": 84
+      },
+      {
+        "label": "34",
+        "inseamCm": 89
+      }
     ]
   },
   {
@@ -152,17 +315,34 @@
     "name": "The Juno Utility Jean in Rigid Denim",
     "wash": "Stone Rinse",
     "washes": [
-      { "name": "Stone Rinse", "color": "#7D8CA3" },
-      { "name": "Alder Wash", "color": "#5C6B7A" }
+      {
+        "name": "Stone Rinse",
+        "color": "#7D8CA3"
+      },
+      {
+        "name": "Alder Wash",
+        "color": "#5C6B7A"
+      }
     ],
     "priceUsd": 138,
     "stretch": "No Stretch",
     "details": "13 oz rigid denim, seven pockets, double knees. Cut straight.",
     "image": "/img/catalog/g9.jpg",
-    "waists": ["28", "30", "32", "34"],
+    "waists": [
+      "28",
+      "30",
+      "32",
+      "34"
+    ],
     "lengths": [
-      { "label": "30", "inseamCm": 72 },
-      { "label": "32", "inseamCm": 77 }
+      {
+        "label": "30",
+        "inseamCm": 77
+      },
+      {
+        "label": "32",
+        "inseamCm": 82
+      }
     ]
   },
   {
@@ -170,17 +350,34 @@
     "name": "The Lova Flare Jean in Stretch Denim",
     "wash": "Ember Wash",
     "washes": [
-      { "name": "Ember Wash", "color": "#4A4E5C" },
-      { "name": "Raw Indigo", "color": "#20242B" }
+      {
+        "name": "Ember Wash",
+        "color": "#4A4E5C"
+      },
+      {
+        "name": "Raw Indigo",
+        "color": "#20242B"
+      }
     ],
     "priceUsd": 158,
     "stretch": "Some Stretch",
     "details": "11 oz stretch denim, fitted through the thigh, full flare below.",
     "image": "/img/catalog/g10.jpg",
-    "waists": ["26", "28", "30", "32"],
+    "waists": [
+      "26",
+      "28",
+      "30",
+      "32"
+    ],
     "lengths": [
-      { "label": "32", "inseamCm": 80 },
-      { "label": "34", "inseamCm": 85 }
+      {
+        "label": "32",
+        "inseamCm": 85
+      },
+      {
+        "label": "34",
+        "inseamCm": 90
+      }
     ]
   }
 ]

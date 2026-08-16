@@ -1,12 +1,12 @@
 import React from "react";
-import { BottomSheet, BreakMark, VerdictCard, MeasureReceipt, ChipRow, Button, Shimmer } from "../ds";
+import { BottomSheet, BreakMark, VerdictCard, MeasureReceipt, ChipRow, Button, Shimmer, HemOption } from "../ds";
 import { FitSetup, FitConfirm } from "./FitSetup.jsx";
 import { fitVerdict } from "../../../lib/fit.js";
 
 // The Length Check sheet. First open ever: Break introduces itself and asks
 // for the benchmark pair right here, then answers. Every later open goes
 // straight to the verdict.
-export function BreakSheet({ open, item, lengthLabel, fit, shoes, benchmarks, onFit, onClose, onSeeIt }) {
+export function BreakSheet({ open, item, lengthLabel, fit, shoes, benchmarks, onFit, hemPref, onHemPref, onClose, onSeeIt }) {
   const [unit, setUnit] = React.useState("cm");
   const [busy, setBusy] = React.useState(false);
   const [view, setView] = React.useState(fit ? "verdict" : "setup");
@@ -57,7 +57,18 @@ export function BreakSheet({ open, item, lengthLabel, fit, shoes, benchmarks, on
             rows={[{ label: "This garment", value: num(length.inseamCm) }, { label: "Your length", value: num(v.targetCm) }]}
             note={v.tone === "unsure" ? "Waist and hip look right, but this fabric moves" : "Waist and hip look right for this size"} />
 
-          <ChipRow label="Worn with" options={shoes.map(s => ({ value: s.id, label: s.name }))} value={fit.shoeId} onChange={changeShoe} />
+          <ChipRow label="Usually worn with" options={shoes.map(s => ({ value: s.id, label: s.name }))} value={fit.shoeId} onChange={changeShoe} />
+
+          {v.tone === "long" ? (
+            <div style={{ display: "grid", gap: "var(--space-3)" }}>
+              <HemOption selected={!hemPref} onClick={() => onHemPref(false)} title="Original"
+                detail={`${Math.round(length.inseamCm)} cm, pools on the floor in your ${shoe.name.toLowerCase()}`} price="Included" />
+              <HemOption selected={hemPref} recommended={hemPref} onClick={() => onHemPref(true)} title="Hem to your length"
+                detail={`${Math.round(v.targetCm)} cm, adds 3 days`} price="+$12" />
+            </div>
+          ) : v.tone === "fits" ? (
+            <HemOption selected title="Original" detail={`Already your length in your ${shoe.name.toLowerCase()}`} price="Included" />
+          ) : null}
         </div>
       )}
     </BottomSheet>
