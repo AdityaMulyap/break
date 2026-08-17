@@ -1,25 +1,42 @@
 # Image credits
 
-All images are CC0 (public domain dedication) — free to use for any purpose, no attribution required. Sourced via Openverse (openverse.org) license filter `cc0`. Cropped for the storefront.
+## Storefront photography (`hero.jpg`, `catalog/`)
 
-- `hero.jpg` — "Woman wearing distressed blue denim jeans sitting on floor" by Imani Bahati.
-  https://commons.wikimedia.org/wiki/File:Imani-bahati-woman-wearing-distressed-blue-denim-jeans-sitting-on-floor.jpg
-  Cropped to 4:5 for the storefront hero.
+AI-generated for this project — no third-party rights, no model releases needed, and no
+brand marks on the footwear (the previous stock set showed three-stripe sneakers, a
+trademark risk on camera). Converted from PNG to JPEG at 900px wide.
 
-Catalog on-model shots (`catalog/gN.jpg` + `-d1`/`-d2` detail crops), all CC0 via Openverse.
-StockSnap CC0 unless noted (URLs: https://cdn.stocksnap.io/img-thumbs/960w/<ID>.jpg):
-  g1 MZETFN7OOC · g2 "Stylish fall outfit" Flickr 30660098422 · g3 0369993BB5 ·
-  g4 S4541GKUE4 · g5 "Girl sitting on the park wall" Flickr 30734171885 ·
-  g6 BD31KHIDA7 · g7 PCVPBKR7XG · g8 KJQLYNQHKS · g9 95MWBBQI3S · g10 FN8IBLZCLV
+Catalog mapping, one source image per garment:
 
-Try-on mock (`assets/input/user*.jpg`) — "Woman Legs", StockSnap RPRIQME5CL (CC0).
+| file | garment | shot |
+| --- | --- | --- |
+| g1 | Mara Wide-Leg | wide leg, front, full length |
+| g2 | Ida Straight | light wash straight |
+| g3 | Ren Slim Taper | dark rinse slim |
+| g4 | Noa Barrel | curved barrel leg |
+| g5 | Sena Bootcut | relaxed, leaning against concrete |
+| g6 | Alma Low Loose | low rise loose |
+| g7 | Kit Relaxed Taper | men's relaxed straight, street |
+| g8 | Vera Column | column wide, front |
+| g9 | Juno Utility | wide leg, three-quarter angle |
+| g10 | Lova Flare | flare |
 
-All cropped to 3:4 at 600×800; -d1/-d2 are waist/hem detail crops of the same source.
+`-d1`/`-d2` gallery slots reuse a shared pool of alternate shots (back view, waist-down,
+hem detail) and two lifestyle frames, rotated across garments.
 
-Mock try-on photos (`assets/input/user*.jpg`, served at `/mock/`):
-- "Woman Legs" (jeans + white sneakers), StockSnap CC0 https://cdn.stocksnap.io/img-thumbs/960w/RPRIQME5CL.jpg
-  `user-shipped.jpg` adds an amber pooling-zone overlay; `user-hemmed.jpg` adds an indigo hem line. Replaced by real YouCam renders in live mode.
+`catalog/g1-hemmed.jpg` is the shortened reference cloth-v4 renders the "hemmed" try-on
+from: g1 with a 130px band of leg fabric spliced out and the gap closed.
 
-## Try-on input photos (assets/input/)
-- user.jpg — Pexels photo 38432409 (smiling woman in casual jeans, studio), Pexels license
-- avatar.jpg — Pexels photo 19427383 (young woman standing on park pavement), Pexels license
+## Try-on input photos (`assets/input/`)
+
+Both AI-generated, metadata stripped. The previous `avatar.jpg` carried a
+"Terence Balisong Photography 2023" claim in its XMP and was replaced.
+
+- `user.jpg` — the "upload a photo" path. Deliberately shows black leggings: swapping
+  leggings for denim is a far more legible try-on than swapping jeans for jeans, which
+  is what the earlier input produced.
+- `avatar.jpg` — the "no photo needed" path.
+
+`user-shipped.jpg` / `user-hemmed.jpg` are mock-mode placeholders only (`HEMLINE_MOCK=1`);
+live mode replaces them with real YouCam renders. `garment.jpg` and `shoe.jpg` are
+leftovers from the early API spikes and are not referenced by the app.
