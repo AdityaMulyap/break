@@ -162,6 +162,8 @@ export default function App() {
     <Shell>
       <StoreHeader
         onBack={back[screen] ? () => setScreen(back[screen]) : undefined}
+        onBag={bag ? () => setScreen("checkout") : undefined}
+        bagCount={bag ? 1 : 0}
       />
 
       {screen === "home" && <Home catalog={data.catalog} onShop={() => setScreen("catalog")} onOpen={openItem} />}

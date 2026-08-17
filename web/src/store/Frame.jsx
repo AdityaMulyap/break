@@ -24,16 +24,22 @@ export function Shell({ children }) {
   );
 }
 
-export function StoreHeader({ onBack, title }) {
+export function StoreHeader({ onBack, title, onBag, bagCount = 0 }) {
+  // Left slot is back or menu, right slot is the bag — both 18px so the wordmark stays centred.
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", height: 52, padding: "0 var(--page-margin)", borderBottom: "var(--hairline)", background: "var(--paper)", position: "relative", zIndex: 5 }}>
-      {onBack ? (
-        <button type="button" onClick={onBack} aria-label="Back" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", lineHeight: 0 }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M15 5l-7 7 7 7" /></svg>
-        </button>
-      ) : null}
+      <button type="button" onClick={onBack} aria-label={onBack ? "Back" : "Menu"} disabled={!onBack}
+        style={{ background: "none", border: "none", padding: 0, cursor: onBack ? "pointer" : "default", lineHeight: 0, width: 18 }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          {onBack ? <path d="M15 5l-7 7 7 7" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+        </svg>
+      </button>
       <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>{title || <Wordmark />}</div>
-      <div style={{ width: 18 }} />
+      <button type="button" onClick={onBag} aria-label={bagCount ? `Bag, ${bagCount} item` : "Bag"}
+        style={{ background: "none", border: "none", padding: 0, cursor: onBag ? "pointer" : "default", lineHeight: 0, width: 18, position: "relative" }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M5 8h14v13H5V8zm3 0a4 4 0 0 1 8 0" /></svg>
+        {bagCount ? <span style={{ position: "absolute", top: -2, right: -3, width: 7, height: 7, borderRadius: "var(--radius-pill)", background: "var(--accent)" }} /> : null}
+      </button>
     </div>
   );
 }

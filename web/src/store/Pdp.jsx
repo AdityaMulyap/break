@@ -7,29 +7,35 @@ export function Pdp({ item, verdict, answered, onOpenVerdict, onAdd, waist, onWa
   const [saved, setSaved] = React.useState(false);
   const [shot, setShot] = React.useState(0);
 
-  // Gallery: the card shot plus two detail crops generated alongside it,
-  // then the wash swatches as color tiles.
-  const gallery = [item.image, item.image.replace(".jpg", "-d1.jpg"), item.image.replace(".jpg", "-d2.jpg")];
-  const thumbs = [...gallery, ...item.washes.map(w => w.color)].slice(0, 5);
+  // Gallery: the card shot plus four alternate views shot alongside it.
+  const gallery = [item.image, ...[1, 2, 3, 4].map(n => item.image.replace(".jpg", `-d${n}.jpg`))];
 
   return (
     <>
       <Scroll pad={false}>
-        <PhotoFrame ratio="4 / 5" label={item.name.toUpperCase() + " · " + item.wash.toUpperCase()} src={gallery[shot]} alt={item.name} style={{ borderRadius: 0 }} />
+        <div style={{ position: "relative" }}>
+          <PhotoFrame ratio="4 / 5" label={item.name.toUpperCase() + " · " + item.wash.toUpperCase()} src={gallery[shot]} alt={item.name} style={{ borderRadius: 0 }} />
+          <button type="button" onClick={() => setSaved(!saved)} aria-label={saved ? "Saved" : "Save"} aria-pressed={saved}
+            style={{ position: "absolute", top: "var(--space-4)", right: "var(--space-4)", width: 34, height: 34, display: "grid", placeItems: "center", borderRadius: "var(--radius-pill)", border: "none", background: "rgba(255,255,255,.9)", boxShadow: "var(--shadow-plugin)", cursor: "pointer" }}>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill={saved ? "var(--ink)" : "none"} stroke="var(--ink)" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20s-7-4.6-9-9c-1.2-2.7.6-6 3.8-6 2 0 3.4 1.2 5.2 3.2C13.8 6.2 15.2 5 17.2 5c3.2 0 5 3.3 3.8 6-2 4.4-9 9-9 9z" /></svg>
+          </button>
+        </div>
         <div style={{ display: "flex", gap: "var(--space-2)", padding: "var(--space-2) var(--page-margin) 0" }}>
-          {thumbs.map((t, i) => (
-            <button key={i} type="button" onClick={t.startsWith("/") ? () => setShot(i) : undefined}
-              aria-label={t.startsWith("/") ? `Photo ${i + 1}` : "Wash swatch"}
-              style={{ width: 52, height: 52, borderRadius: 10, padding: 0, cursor: t.startsWith("/") ? "pointer" : "default", border: i === shot ? "1px solid var(--border-selected)" : "var(--hairline)", overflow: "hidden", flex: "0 0 auto", background: t.startsWith("#") ? t : "none" }}>
-              {t.startsWith("/") ? <img src={t} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /> : null}
+          {gallery.map((t, i) => (
+            <button key={i} type="button" onClick={() => setShot(i)} aria-label={`Photo ${i + 1}`} aria-current={i === shot ? "true" : undefined}
+              style={{ width: 52, height: 52, borderRadius: 10, padding: 0, cursor: "pointer", border: i === shot ? "1px solid var(--border-selected)" : "var(--hairline)", overflow: "hidden", flex: "0 0 auto", background: "none" }}>
+              <img src={t} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </button>
           ))}
+        </div>
+        <div style={{ padding: "var(--space-3) var(--page-margin) 0" }}>
+          <ModelStats>Model is 5'9", wearing 28 × {item.lengths[0].label}</ModelStats>
         </div>
         <div style={{ padding: "var(--space-5) var(--page-margin) var(--space-8)", display: "grid", gap: "var(--space-5)" }}>
           <div style={{ display: "grid", gap: "var(--space-2)", justifyItems: "start" }}>
             {item.bestseller || item.rating ? (
               <span style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
-                {item.bestseller ? <span style={{ font: "var(--text-tiny-role)", letterSpacing: "var(--ls-label)", textTransform: "uppercase", border: "var(--hairline)", borderRadius: 6, padding: "3px 8px", color: "var(--text-secondary)" }}>Bestseller</span> : null}
+                {item.bestseller ? <span style={{ font: "var(--text-tiny-role)", letterSpacing: "var(--ls-label)", textTransform: "uppercase", background: "var(--surface-plugin)", borderRadius: 6, padding: "5px 10px", color: "var(--accent)" }}>Bestseller</span> : null}
                 {item.rating ? <span style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)" }}>{"★".repeat(5)} {item.rating.stars} ({item.rating.count})</span> : null}
               </span>
             ) : null}
@@ -39,7 +45,6 @@ export function Pdp({ item, verdict, answered, onOpenVerdict, onAdd, waist, onWa
               ${item.priceUsd}
               {item.compareAtUsd ? <span style={{ marginLeft: 8, color: "var(--text-muted)", textDecoration: "line-through" }}>${item.compareAtUsd}</span> : null}
             </span>
-            <ModelStats>Model is 5'9", wearing 28 × {item.lengths[0].label}</ModelStats>
           </div>
 
           <div style={{ display: "grid", gap: "var(--space-2)" }}>

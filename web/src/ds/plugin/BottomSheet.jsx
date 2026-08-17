@@ -4,9 +4,12 @@ import React from "react";
 export function BottomSheet({ open = true, title, onClose, children, footer, style, ...rest }) {
   if (!open) return null;
   return (
-    <div style={{ position: "absolute", inset: 0, display: "grid", alignItems: "end", zIndex: 20 }} {...rest}>
+    <div style={{ position: "absolute", inset: 0, zIndex: 20 }} {...rest}>
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "var(--surface-scrim)" }} />
-      <div style={{ position: "relative", background: "var(--paper)", borderRadius: "var(--radius-plugin) var(--radius-plugin) 0 0", boxShadow: "var(--shadow-sheet)", maxHeight: "88%", display: "grid", gridTemplateRows: "auto 1fr auto", animation: "breakSheetIn var(--dur-sheet) var(--ease-out)", ...style }}>
+      {/* Absolutely positioned, not a grid item: a percentage max-height only
+          resolves against a containing block with a definite height, and an
+          auto-sized grid row is not one — the card would outgrow the frame. */}
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, background: "var(--paper)", borderRadius: "var(--radius-plugin) var(--radius-plugin) 0 0", boxShadow: "var(--shadow-sheet)", maxHeight: "88%", minHeight: 0, display: "grid", gridTemplateRows: "auto 1fr auto", animation: "breakSheetIn var(--dur-sheet) var(--ease-out)", ...style }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-3)", padding: "var(--space-4) var(--page-margin)", borderBottom: "var(--hairline)" }}>
           <span>{title}</span>
           <button type="button" onClick={onClose} aria-label="Close" style={{ background: "none", border: "none", padding: 0, cursor: "pointer", lineHeight: 0 }}>

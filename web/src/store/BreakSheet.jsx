@@ -29,7 +29,7 @@ export function BreakSheet({ open, item, lengthLabel, fit, shoes, benchmarks, on
 
   return (
     <BottomSheet open={open} onClose={onClose} title={<BreakMark fn="LENGTH CHECK" />}
-      footer={view === "verdict" && v && v.tone !== "short"
+      footer={view === "verdict" && v
         ? <Button full plugin onClick={onSeeIt}>See it on you</Button>
         : undefined}>
       {view === "setup" ? (
