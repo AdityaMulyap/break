@@ -32,21 +32,21 @@ export function TryOnAsk({ onPhoto, onAvatar }) {
 }
 
 const STAGE_TEXT = {
-  shoes_vto: shoe => `Putting your ${shoe.toLowerCase()} on first`,
   verdict: () => "Checking the length",
   cloth_vto_shipped: () => "Rendering it as shipped",
   cloth_vto_hemmed: () => "Rendering it hemmed to yours",
+  shoes_vto: shoe => `Putting your ${shoe.toLowerCase()} on`,
   done: () => "Ready",
 };
 
 const HEEL_HEIGHTS = ["Under 4 cm", "4 to 7 cm", "Over 7 cm"];
 
 // Real render flow: POST /api/render starts the YouCam chain
-// (shoes VTO -> verdict -> cloth VTO as shipped -> cloth VTO hemmed),
-// then we poll the job. Changing the shoe chip re-runs the chain — the
-// on-camera API moment. In mock mode the server simulates the timeline.
+// (verdict -> cloth VTO as shipped -> cloth VTO hemmed), then we poll the job.
+// In mock mode the server simulates the timeline. The shoe chip re-runs the
+// chain but cannot change the footwear — see the note by the chip below.
 export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdict, hemPref, onCheckout, onRetry, source = "photo" }) {
-  const [job, setJob] = React.useState({ stage: "shoes_vto", done: false, error: null, result: null });
+  const [job, setJob] = React.useState({ stage: "verdict", done: false, error: null, result: null });
   const [len, setLen] = React.useState("your");
   const [heel, setHeel] = React.useState(HEEL_HEIGHTS[1]);
   const [compare, setCompare] = React.useState(false);
@@ -54,7 +54,7 @@ export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdi
   React.useEffect(() => {
     let alive = true;
     let timer;
-    setJob({ stage: "shoes_vto", done: false, error: null, result: null });
+    setJob({ stage: "verdict", done: false, error: null, result: null });
     (async () => {
       try {
         const res = await fetch("/api/render", {
@@ -80,11 +80,24 @@ export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdi
     return () => { alive = false; clearTimeout(timer); };
   }, [item.id, lengthLabel, fit.shoeId, fit.benchmarkCm, source]);
 
+
   const loading = !job.done;
   const failed = job.done && (job.error || !job.result);
   const r = job.result;
   const labels = { full: "Original", your: "Your length" };
-  const img = r ? (len === "full" ? r.shippedImage : r.hemmedImage) ?? r.baseImage : null;
+  // Too-short pairs come back without a hemmed frame — a hem can only remove
+  // length — so the length toggle and the comparison have nothing to switch to.
+  const hemmable = Boolean(r?.hemmedImage);
+  const img = r ? (len === "full" || !hemmable ? r.shippedImage : r.hemmedImage) ?? r.baseImage : null;
+
+  // Before/after. Without the untouched photo in the strip there is nothing to
+  // read the render against — the customer only ever sees themselves already
+  // wearing the jeans. Too-short pairs have no hemmed frame to add.
+  const frames = r ? [
+    r.sourceImage && { key: "before", label: "Your photo", src: r.sourceImage, accent: false },
+    { key: "shipped", label: "As shipped", src: r.shippedImage ?? r.baseImage, accent: false },
+    hemmable && { key: "hemmed", label: "Hemmed", src: r.hemmedImage, accent: true },
+  ].filter(Boolean) : [];
   const stageText = (STAGE_TEXT[job.stage] ?? (() => "Working"))(shoe?.name ?? "shoes");
 
   const hemOn = hemPref && verdict?.tone === "long" && len === "your";
@@ -108,16 +121,14 @@ export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdi
                   "Your photo may be too dark or cropped"}
               </ErrorNote>
             </>
-          ) : compare ? (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-2)" }}>
-              <div style={{ display: "grid", gap: "var(--space-2)" }}>
-                <PhotoFrame ratio="4 / 5" label="As shipped" src={r.shippedImage} alt="As shipped" plugin />
-                <span style={{ font: "var(--text-tiny-role)", color: "var(--text-secondary)", textAlign: "center" }}>As shipped</span>
-              </div>
-              <div style={{ display: "grid", gap: "var(--space-2)" }}>
-                <PhotoFrame ratio="4 / 5" label="Hemmed" src={r.hemmedImage} alt="Hemmed to your length" plugin />
-                <span style={{ font: "var(--text-tiny-role)", color: "var(--accent)", textAlign: "center" }}>Hemmed</span>
-              </div>
+          ) : compare && frames.length > 1 ? (
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${frames.length}, 1fr)`, gap: "var(--space-2)" }}>
+              {frames.map(f => (
+                <div key={f.key} style={{ display: "grid", gap: "var(--space-2)" }}>
+                  <PhotoFrame ratio="4 / 5" label={f.label} src={f.src} alt={f.label} plugin />
+                  <span style={{ font: "var(--text-tiny-role)", color: f.accent ? "var(--accent)" : "var(--text-secondary)", textAlign: "center" }}>{f.label}</span>
+                </div>
+              ))}
             </div>
           ) : (
             <PhotoFrame ratio="4 / 5" label={"Try-on · " + labels[len]} src={img} alt={labels[len]} plugin />
@@ -126,20 +137,39 @@ export function TryOnRender({ item, fit, shoe, shoes, onShoe, lengthLabel, verdi
           {!loading && !failed ? (
             <>
               <ChipRow label="Shoes" options={shoes.map(s => ({ value: s.id, label: s.name }))} value={fit.shoeId} onChange={onShoe} />
+              {/* The render keeps whatever shoes are in the customer's own photo —
+                  cloth-v4 regenerates the lower body last and owns the footwear — so
+                  say so, otherwise switching this chip reads as a broken control. */}
+              <span style={{ font: "var(--text-tiny-role)", fontWeight: "var(--fw-regular)", color: "var(--text-muted)" }}>
+                Your own shoes stay in the photo above. This sets the hem we measure to.
+              </span>
+
+              {/* No shoe-preview frame here on purpose. POST /api/shoe-preview works and
+                  calls YouCam's shoes task, but that task restages the whole photo — it
+                  came back with cargo pants, a skirt, and denim shorts across five tries,
+                  never the garment being sold. Measured 2026-08-17; see ATTRIBUTION.md. */}
               {fit.shoeId === "heels" ? (
                 <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
                   {HEEL_HEIGHTS.map(h => <SubChip key={h} label={h} selected={heel === h} onClick={() => setHeel(h)} />)}
                 </div>
               ) : null}
-              <ChipRow label="Length" options={[{ value: "full", label: labels.full }, { value: "your", label: labels.your, recommended: true }]} value={len} onChange={setLen} />
+              {hemmable ? (
+                <ChipRow label="Length" options={[{ value: "full", label: labels.full }, { value: "your", label: labels.your, recommended: true }]} value={len} onChange={setLen} />
+              ) : (
+                <span style={{ font: "var(--text-small-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)" }}>
+                  {verdict?.headline}. A hem only takes length off, so this one can't be fixed — try a longer size.
+                </span>
+              )}
               {hemOn && verdict ? (
                 <span style={{ font: "var(--text-tiny-role)", fontWeight: "var(--fw-regular)", color: "var(--text-secondary)" }}>
                   {Math.round(verdict.targetCm)} cm, hemmed for your {shoe?.name.toLowerCase()} · +$12
                 </span>
               ) : null}
-              <button type="button" onClick={() => setCompare(!compare)} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", font: "var(--text-small-role)", color: "var(--text-link)", textDecoration: "underline", textUnderlineOffset: "3px", justifySelf: "start" }}>
-                {compare ? "Show single view" : "As shipped vs. hemmed"}
-              </button>
+              {frames.length > 1 ? (
+                <button type="button" onClick={() => setCompare(!compare)} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", font: "var(--text-small-role)", color: "var(--text-link)", textDecoration: "underline", textUnderlineOffset: "3px", justifySelf: "start" }}>
+                  {compare ? "Show single view" : "Compare with your photo"}
+                </button>
+              ) : null}
             </>
           ) : null}
         </div>
