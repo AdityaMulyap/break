@@ -1,24 +1,43 @@
-# Hemline
+# Break
 
-**Will the pants you're about to buy arrive too long?** Hemline answers that
+**Will the pants you're about to buy arrive too long?** Break answers that
 before checkout: measure one pair you already own, pick the shoes you'll wear,
 and get a verdict in centimeters — plus a try-on render of the *corrected*
-garment on your own photo, powered by two chained YouCam APIs.
+garment on your own photo.
 
-Virtual try-on answers "does this look right on me." Hemline closes the loop:
+Virtual try-on answers "does this look right on me." Break closes the loop:
 "will it arrive right" — and if not, checkout offers hemming to your exact
 length as a service line item.
 
-## How the YouCam chain works
+## How the render works
 
-1. **Shoes VTO** (`/s2s/v2.0/task/shoes`) renders the chosen shoe onto the
-   user's photo.
-2. The **length verdict** (pure math, `lib/verdict.js`) compares the catalog
-   garment's published outseam against the user's benchmark, adjusted for the
+1. The **length verdict** (pure math, `lib/fit.js`) compares the catalog
+   garment's published inseam against the user's benchmark, adjusted for the
    chosen shoe's heel height and break preference.
-3. **Clothes VTO** (`/s2s/v2.0/task/cloth-v4`) runs *on the shoe-rendered
-   image* — twice: once with the garment as shipped, once pre-shortened to the
-   hem target. The side-by-side render always agrees with the math.
+2. **Clothes VTO** (`/s2s/v2.0/task/cloth-v4`) runs on the user's own photo,
+   twice: once with the garment as shipped, once against a pre-shortened
+   reference. The side-by-side render always agrees with the math.
+
+The comparison strip shows the untouched photo beside both renders, so the
+difference is readable rather than asserted.
+
+### Why Shoes VTO is not in the chain
+
+The original design fed Shoes VTO's output into Clothes VTO. It was cut after
+measurement, not on a hunch. Both tasks regenerate the entire image rather than
+editing one region, so whichever runs last owns the whole frame. Across five
+configurations the shoes task restaged a plain studio portrait as an art
+gallery, a cobblestone street, a wheat field, a Yosemite overlook and a Tudor
+cottage — and swapped the garment for denim shorts, a skirt and cargo pants
+along the way. It applies the right shoe every time and keeps nothing else.
+
+`cloth-v4` is the better behaved of the two: it holds pose and background and
+only invents footwear. So it runs last and alone, which is what lets the
+as-shipped and hemmed frames share one backdrop and read as a comparison.
+
+The consequence is deliberate and visible in the UI: the shoe picker changes
+the hem target, not the photograph, and says so. `POST /api/shoe-preview` still
+calls the shoes task for anyone who wants to see this for themselves.
 
 Every YouCam call goes through one cached client (`server/lib/youcam.js`):
 requests are hashed (task + input image bytes + params) and replayed from
@@ -45,7 +64,7 @@ cp .env.example .env   # add your YouCam API key
 npm start
 ```
 
-Set `HEMLINE_MOCK=1` to force mock mode even with a key present.
+Set `BREAK_MOCK=1` to force mock mode even with a key present.
 
 ## Development
 
@@ -60,6 +79,6 @@ node scripts/screenshots.js   # headless walkthrough + screenshots
 ## Honest limitations
 
 - The catalog is curated demo data (8 garments, hand-entered published
-  lengths) — Hemline is a proof of the flow, not a store.
+  lengths) — Break is a proof of the flow, not a store.
 - One user photo ships with the demo; production would ask for your own.
 - Checkout is a UI state, not a payment flow.

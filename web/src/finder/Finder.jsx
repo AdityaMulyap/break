@@ -159,7 +159,7 @@ export default function Finder() {
       <section id="more" className="finder-more">
         <h2>Then see it on you</h2>
         <p>
-          The full Hemline flow renders your shoes and the corrected garment on
+          The full Break flow renders your shoes and the corrected garment on
           your own photo with two chained YouCam try-on calls — so the picture
           always agrees with the math above.
         </p>

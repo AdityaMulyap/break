@@ -37,6 +37,6 @@ Both AI-generated, metadata stripped. The previous `avatar.jpg` carried a
   is what the earlier input produced.
 - `avatar.jpg` — the "no photo needed" path.
 
-`user-shipped.jpg` / `user-hemmed.jpg` are mock-mode placeholders only (`HEMLINE_MOCK=1`);
+`user-shipped.jpg` / `user-hemmed.jpg` are mock-mode placeholders only (`BREAK_MOCK=1`);
 live mode replaces them with real YouCam renders. `garment.jpg` and `shoe.jpg` are
 leftovers from the early API spikes and are not referenced by the app.

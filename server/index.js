@@ -1,7 +1,7 @@
-// Hemline server: holds the API key, proxies YouCam calls through the disk
+// Break server: holds the API key, proxies YouCam calls through the disk
 // cache, computes verdicts, serves the built frontend.
 //
-// Mock mode (no credits burned): set HEMLINE_MOCK=1, or it activates itself
+// Mock mode (no credits burned): set BREAK_MOCK=1, or it activates itself
 // when YOUCAM_API_KEY is missing. Renders are replaced with local images and
 // a simulated task timeline so the UI's loading states are real.
 
@@ -15,7 +15,9 @@ import { shoesVto, clothVto } from './lib/youcam.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = process.env.PORT || 5171;
-const MOCK = process.env.HEMLINE_MOCK === '1' || !process.env.YOUCAM_API_KEY;
+// HEMLINE_MOCK is the pre-rename spelling, still honoured: a stale .env silently
+// falling through to live mode would spend real API units.
+const MOCK = process.env.BREAK_MOCK === '1' || process.env.HEMLINE_MOCK === '1' || !process.env.YOUCAM_API_KEY;
 
 const catalog = JSON.parse(readFileSync(path.join(ROOT, 'data/catalog.json'), 'utf8'));
 const shoes = JSON.parse(readFileSync(path.join(ROOT, 'data/shoes.json'), 'utf8'));
@@ -215,5 +217,5 @@ if (existsSync(dist)) {
 }
 
 app.listen(PORT, () => {
-  console.log(`Hemline server on http://localhost:${PORT} ${MOCK ? '(MOCK mode, no API units spent)' : '(LIVE mode)'}`);
+  console.log(`Break server on http://localhost:${PORT} ${MOCK ? '(MOCK mode, no API units spent)' : '(LIVE mode)'}`);
 });

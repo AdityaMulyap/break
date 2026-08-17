@@ -10,7 +10,7 @@ Two audiences, one screen. Primary: an online shopper on their phone, mid-purcha
 
 ## Product Purpose
 
-Hemline answers the question VTO leaves open: not "does this look right on me" but "will it arrive right." The user measures one pair of pants they own, browses a curated catalog, picks a shoe, and gets a plain verdict ("Arrives 5cm too long for you with these shoes") plus a side-by-side render — as-shipped vs hemmed-to-length — on their own body. The checkout shows hem-to-length as a paid service line item: the business model made visible. Success = a judge sees two YouCam APIs chained (Shoes VTO output feeding Clothes VTO input) driving a decision, in a UI that feels like a real product.
+Break answers the question VTO leaves open: not "does this look right on me" but "will it arrive right." The user measures one pair of pants they own, browses a curated catalog, picks a shoe, and gets a plain verdict ("Arrives 5cm too long for you with these shoes") plus a side-by-side render — as-shipped vs hemmed-to-length — on their own body. The checkout shows hem-to-length as a paid service line item: the business model made visible. Success = a judge sees a YouCam render driving a decision, in a UI that feels like a real product. The original two-task chain (Shoes VTO feeding Clothes VTO) was measured and cut: both tasks regenerate the whole frame, so the shoes pass destroyed the garment being sold. See the README for the evidence.
 
 ## Brand Personality
 
